@@ -10,9 +10,13 @@ body {
 .app-name {
 	position: absolute;
 	z-index: 1000;
-	color: white;
 	bottom: 10px;
 	right: 10px;
+	text-align: right;
+}
+
+.app-name * {
+	color: white;
 }
 
 .mind-map {
@@ -28,4 +32,5 @@ body {
 	color: #8f8d7d;
 	border: 3px solid #8f8d7d;
 	padding: 5px 10px;
+	max-width: 200px;
 }

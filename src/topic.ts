@@ -1,10 +1,13 @@
+import {v4 as uuidv4} from 'uuid';
 interface TopicData {
+	id?: string;
 	title: string;
 	children: Array<Topic>;
 	parent?: Topic;
 }
 
 class Topic {
+	id: string;
 	title: string;
 	children: Array<Topic>;
 	board: HTMLElement | null = null;
@@ -13,6 +16,7 @@ class Topic {
 	parent: Topic | null;
 
 	constructor(topicData: TopicData) {
+		this.id = topicData.id ? topicData.id : uuidv4();
 		this.title = topicData.title;
 		this.children = topicData.children;
 		this.parent = topicData.parent ? topicData.parent : null;
@@ -59,6 +63,18 @@ class Topic {
 
 	public printTitle(): void {
 		console.log(this.title);
+	}
+
+	public isMounted(): boolean {
+		return this.board != null;
+	}
+
+	public getBox() {
+		if (!this.isMounted()) {
+			throw new Error('Topic not mounted');
+		} else {
+			return [this.el.offsetWidth, this.el.offsetHeight];
+		}
 	}
 }
 
