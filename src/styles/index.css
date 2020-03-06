@@ -33,4 +33,9 @@ body {
 	border: 3px solid #8f8d7d;
 	padding: 5px 10px;
 	max-width: 200px;
+	cursor: pointer;
+}
+
+.topic:hover {
+	border-color: yellow;
 }

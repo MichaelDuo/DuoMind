@@ -6,8 +6,10 @@
 		"html",
 		{"language": "typescript", "autoFix": true}
 	],
-	"eslint.autoFixOnSave": true,
 	"javascript.suggest.autoImports": false,
 	"typescript.suggest.autoImports": false,
-	"typescript.tsdk": "node_modules/typescript/lib"
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+	}
 }

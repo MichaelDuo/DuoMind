@@ -1,6 +1,3 @@
-import Topic from './topic';
-import './layout';
-import './app';
 import MindMap from './mindmap';
 
 class App {
