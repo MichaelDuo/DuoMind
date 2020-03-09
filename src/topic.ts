@@ -14,6 +14,7 @@ class Topic {
 	el: HTMLElement;
 	text: HTMLElement;
 	parent: Topic | null;
+	canvas: HTMLCanvasElement;
 
 	constructor(topicData: TopicData) {
 		this.id = topicData.id ? topicData.id : uuidv4();
@@ -23,12 +24,15 @@ class Topic {
 
 		this.el = document.createElement('div');
 		this.text = document.createElement('div');
+		this.canvas = document.createElement('canvas');
 
 		this.el.classList.add('topic');
+		this.canvas.classList.add('branch-connections');
 
 		this.text.innerText = topicData.title;
 
 		this.el.appendChild(this.text);
+		this.el.appendChild(this.canvas);
 	}
 
 	static fromJSON(topicJSON: any): Topic {

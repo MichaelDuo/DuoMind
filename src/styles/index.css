@@ -39,3 +39,9 @@ body {
 .topic:hover {
 	border-color: yellow;
 }
+
+.branch-connections {
+	position: absolute;
+	top: 0;
+	left: 0;
+}

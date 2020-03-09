@@ -1,11 +1,11 @@
 import Topic from './topic';
 
 class Layout {
-	private bBoxes: {
+	protected bBoxes: {
 		[key: string]: number[];
 	};
 
-	offsetChildren = 10;
+	offsetChildren = 20;
 	offsetSibling = 1;
 
 	constructor() {
@@ -14,9 +14,13 @@ class Layout {
 
 	update(topic: Topic) {
 		this.updateBBoxes(topic);
-		let mapCenter = [300, 300];
+		let mapCenter = [600, 300];
 		// this.layout(topic, mapCenter, 'right');
 		this.layoutRoot(topic, mapCenter);
+	}
+
+	layoutRoot(topic: Topic, pos: number[]) {
+		// Implement by subclasses
 	}
 
 	updateBBoxes(topic: Topic) {
@@ -35,52 +39,6 @@ class Layout {
 			Math.max(topicBox[1], childrenBBox[1]),
 		];
 		this.bBoxes[topic.id] = box;
-	}
-
-	layoutRoot(root: Topic, pos: number[]) {
-		let topicBox = root.getBox();
-		let bBox = this.bBoxes[root.id];
-		root.el.style.left = pos[0] + 'px';
-		root.el.style.top = pos[1] + 'px';
-
-		let rightChildren = root.children.slice(0, root.children.length / 2);
-		let leftChildren = root.children.slice(
-			root.children.length / 2,
-			root.children.length
-		);
-
-		let leftBBox = leftChildren.reduce(
-			(prev, child) => [
-				Math.max(prev[0], this.bBoxes[child.id][0]),
-				prev[1] + this.bBoxes[child.id][1],
-			],
-			[0, 0]
-		);
-
-		let rightBBox = rightChildren.reduce(
-			(prev, child) => [
-				Math.max(prev[0], this.bBoxes[child.id][0]),
-				prev[1] + this.bBoxes[child.id][1],
-			],
-			[0, 0]
-		);
-
-		// Right branches
-		this.layoutChildren(
-			rightChildren,
-			[
-				pos[0] + topicBox[0] + this.offsetChildren,
-				pos[1] - rightBBox[1] / 2,
-			],
-			'right'
-		);
-
-		// Left branches
-		this.layoutChildren(
-			leftChildren,
-			[pos[0] - this.offsetChildren, pos[1] - leftBBox[1] / 2],
-			'left'
-		);
 	}
 
 	layoutChildren(children: Topic[], pos: number[], direction = 'right') {
