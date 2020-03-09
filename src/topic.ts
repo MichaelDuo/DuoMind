@@ -12,6 +12,7 @@ class Topic {
 	children: Array<Topic>;
 	board: HTMLElement | null = null;
 	el: HTMLElement;
+	content: HTMLElement;
 	text: HTMLElement;
 	parent: Topic | null;
 	canvas: HTMLCanvasElement;
@@ -23,16 +24,20 @@ class Topic {
 		this.parent = topicData.parent ? topicData.parent : null;
 
 		this.el = document.createElement('div');
+		this.content = document.createElement('div');
 		this.text = document.createElement('div');
 		this.canvas = document.createElement('canvas');
 
 		this.el.classList.add('topic');
+		this.content.classList.add('topic-content');
+
 		this.canvas.classList.add('branch-connections');
 
 		this.text.innerText = topicData.title;
 
-		this.el.appendChild(this.text);
 		this.el.appendChild(this.canvas);
+		this.el.appendChild(this.content);
+		this.content.appendChild(this.text);
 	}
 
 	static fromJSON(topicJSON: any): Topic {
@@ -77,7 +82,7 @@ class Topic {
 		if (!this.isMounted()) {
 			throw new Error('Topic not mounted');
 		} else {
-			return [this.el.offsetWidth, this.el.offsetHeight];
+			return [this.content.offsetWidth, this.content.offsetHeight];
 		}
 	}
 }

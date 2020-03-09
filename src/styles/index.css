@@ -29,6 +29,9 @@ body {
 
 .topic {
 	position: absolute;
+}
+
+.topic-content {
 	color: #8f8d7d;
 	border: 3px solid #8f8d7d;
 	padding: 5px 10px;
@@ -36,7 +39,7 @@ body {
 	cursor: pointer;
 }
 
-.topic:hover {
+.topic-content:hover {
 	border-color: yellow;
 }
 
@@ -44,4 +47,5 @@ body {
 	position: absolute;
 	top: 0;
 	left: 0;
+	pointer-events: none;
 }
