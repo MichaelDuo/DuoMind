@@ -1,4 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
+import MindMap from './mindmap';
 interface TopicData {
 	id?: string;
 	title: string;
@@ -10,7 +11,7 @@ class Topic {
 	id: string;
 	title: string;
 	children: Array<Topic>;
-	board: HTMLElement | null = null;
+	mindmap: MindMap | null = null;
 	el: HTMLElement;
 	content: HTMLElement;
 	text: HTMLElement;
@@ -47,24 +48,24 @@ class Topic {
 		let childrenArr: Array<any> = topicJSON.children;
 		if (childrenArr && childrenArr.length) {
 			children = childrenArr
-				.map(v => Topic.fromJSON({...v, parent: this}))
-				.filter(v => v != null);
+				.map((v) => Topic.fromJSON({...v, parent: this}))
+				.filter((v) => v != null);
 		}
 
 		return new Topic({title, children});
 	}
 
-	public mount(board: HTMLElement) {
-		this.board = board;
-		this.board.appendChild(this.el);
+	public mount(mindmap: MindMap) {
+		this.mindmap = mindmap;
+		this.mindmap.board.appendChild(this.el);
 		for (let child of this.children) {
-			child.mount(this.board);
+			child.mount(mindmap);
 		}
 	}
 
 	public unmount() {
 		this.el.remove();
-		this.board = null;
+		this.mindmap = null;
 		for (let child of this.children) {
 			child.unmount();
 		}
@@ -75,7 +76,7 @@ class Topic {
 	}
 
 	public isMounted(): boolean {
-		return this.board != null;
+		return this.mindmap != null;
 	}
 
 	public getBox() {

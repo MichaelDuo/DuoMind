@@ -1,4 +1,5 @@
 import Topic from './topic';
+import MindMap from './mindmap';
 
 class Layout {
 	protected bBoxes: {
@@ -7,9 +8,12 @@ class Layout {
 
 	offsetChildren = 20;
 	offsetSibling = 1;
+	mindmap: MindMap;
 
-	constructor() {
-		this.bBoxes = {};
+	constructor(mindmap: MindMap) {
+		/* Topic's width and height with all it's children included */
+		this.bBoxes = {}; // {id: [width, height]}
+		this.mindmap = mindmap;
 	}
 
 	update(topic: Topic) {
@@ -17,12 +21,14 @@ class Layout {
 		let mapCenter = [600, 300];
 		// this.layout(topic, mapCenter, 'right');
 		this.layoutRoot(topic, mapCenter);
+		this.drawConnections(topic);
 	}
 
 	layoutRoot(topic: Topic, pos: number[]) {
 		// Implement by subclasses
 	}
 
+	// Update Branch Box
 	updateBBoxes(topic: Topic) {
 		let childrenBBox = [0, 0];
 		let offsetSibling = 0;
@@ -39,6 +45,13 @@ class Layout {
 			Math.max(topicBox[1], childrenBBox[1]),
 		];
 		this.bBoxes[topic.id] = box;
+	}
+
+	getMapRect() {
+		let root = this.mindmap.root;
+		// get root BBox
+		// get root postion
+		// return [width, height]
 	}
 
 	layoutChildren(children: Topic[], pos: number[], direction = 'right') {
@@ -76,6 +89,32 @@ class Layout {
 				[end + offsetChildren, top - childBBox[1] / 2],
 				direction
 			);
+		}
+	}
+
+	anchorCanvas(topic: Topic) {
+		let bbox = this.bBoxes[topic.id];
+		console.log(bbox);
+		topic.canvas.width = bbox[0];
+		topic.canvas.height = bbox[1];
+		// topic.canvas.x =
+	}
+
+	drawConnections(topic: Topic) {
+		this.anchorCanvas(topic);
+		const ctx = topic.canvas.getContext('2d');
+		console.log(ctx);
+		if (!ctx) {
+			console.error('Can not get context');
+			return;
+		}
+		ctx.strokeStyle = 'rgb(0,200,0)';
+
+		for (let child of topic.children) {
+			ctx.beginPath();
+			ctx.moveTo(0, 0);
+			ctx.lineTo(100, 150);
+			ctx.stroke();
 		}
 	}
 }

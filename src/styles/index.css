@@ -29,6 +29,7 @@ body {
 
 .topic {
 	position: absolute;
+	overflow: visible;
 }
 
 .topic-content {

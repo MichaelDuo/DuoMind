@@ -2,11 +2,17 @@ import Topic from './topic';
 import Layout from './layout';
 
 class MapLayout extends Layout {
-	update(topic: Topic) {
-		this.updateBBoxes(topic);
+	update(root: Topic) {
+		this.updateBBoxes(root);
 		let mapCenter = [600, 300];
-		// this.layout(topic, mapCenter, 'right');
-		this.layoutRoot(topic, mapCenter);
+		this.layoutRoot(root, mapCenter);
+		this.drawConnections(root);
+	}
+
+	updateBBoxes(root: Topic) {
+		super.updateBBoxes(root);
+		let topicBox = root.getBox();
+		// this.bBoxes[root.id] =
 	}
 
 	layoutRoot(root: Topic, pos: number[]) {
@@ -35,6 +41,10 @@ class MapLayout extends Layout {
 			],
 			[0, 0]
 		);
+
+		// TODO: get position of root
+		// x: leftBBox[0] + offset
+		// y: max(leftBBox[1], rightBBox[1]) / 2 - root.box.height/2
 
 		// Right branches
 		this.layoutChildren(
