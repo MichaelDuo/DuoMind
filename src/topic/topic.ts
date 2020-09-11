@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
-import MindMap from './mindmap';
+import MindMap from 'mindmap';
 interface TopicData {
 	id?: string;
 	title: string;
@@ -12,33 +12,18 @@ class Topic {
 	title: string;
 	children: Array<Topic>;
 	mindmap: MindMap | null = null;
-	el: HTMLElement;
-	content: HTMLElement;
-	text: HTMLElement;
 	parent: Topic | null;
-	canvas: HTMLCanvasElement;
+
+	dom!: HTMLElement;
+	topicEl!: HTMLElement;
+	text!: HTMLElement;
+	canvas!: HTMLCanvasElement;
 
 	constructor(topicData: TopicData) {
 		this.id = topicData.id ? topicData.id : uuidv4();
 		this.title = topicData.title;
 		this.children = topicData.children;
 		this.parent = topicData.parent ? topicData.parent : null;
-
-		this.el = document.createElement('div');
-		this.content = document.createElement('div');
-		this.text = document.createElement('div');
-		this.canvas = document.createElement('canvas');
-
-		this.el.classList.add('topic');
-		this.content.classList.add('topic-content');
-
-		this.canvas.classList.add('branch-connections');
-
-		this.text.innerText = topicData.title;
-
-		this.el.appendChild(this.canvas);
-		this.el.appendChild(this.content);
-		this.content.appendChild(this.text);
 	}
 
 	static fromJSON(topicJSON: any): Topic {
@@ -57,14 +42,14 @@ class Topic {
 
 	public mount(mindmap: MindMap) {
 		this.mindmap = mindmap;
-		this.mindmap.board.appendChild(this.el);
+		this.mindmap.board.appendChild(this.dom);
 		for (let child of this.children) {
 			child.mount(mindmap);
 		}
 	}
 
 	public unmount() {
-		this.el.remove();
+		this.dom.remove();
 		this.mindmap = null;
 		for (let child of this.children) {
 			child.unmount();
@@ -80,11 +65,34 @@ class Topic {
 	}
 
 	public getBox() {
-		if (!this.isMounted()) {
-			throw new Error('Topic not mounted');
-		} else {
-			return [this.content.offsetWidth, this.content.offsetHeight];
+		// if (!this.isMounted()) {
+		// 	throw new Error('Topic not mounted');
+		// } else {
+		// }
+		return [this.topicEl.offsetWidth, this.topicEl.offsetHeight];
+	}
+
+	public render() {
+		this.dom = document.createElement('div');
+		this.topicEl = document.createElement('div');
+		this.text = document.createElement('div');
+		this.canvas = document.createElement('canvas');
+
+		this.dom.classList.add('topic-container');
+		this.topicEl.classList.add('topic');
+		this.canvas.classList.add('branch-connections');
+
+		this.text.innerText = this.title;
+
+		this.dom.appendChild(this.topicEl);
+		this.dom.appendChild(this.canvas);
+		this.topicEl.appendChild(this.text);
+
+		for (let child of this.children) {
+			this.dom.appendChild(child.render());
 		}
+
+		return this.dom;
 	}
 }
 

@@ -1,33 +1,64 @@
 import Topic from './topic';
-import Layout from './layout';
-import MapLayout from './layout-map';
+import Layout from 'layout/layout';
+import MapLayout from 'layout/layout-map';
 import {MindMapI} from './types';
+
+interface Config {
+	data: any;
+}
 class MindMap extends MindMapI {
 	layout: Layout;
 	root: Topic;
-	el: HTMLElement;
-	board: HTMLElement;
-	connections: HTMLElement;
 
-	constructor(data: any) {
+	dom!: HTMLElement;
+	board!: HTMLElement;
+	connections!: HTMLElement;
+
+	constructor(config: Config) {
+		const {data} = config;
 		super(data);
 		this.root = Topic.fromJSON(data);
 		this.layout = new MapLayout(this);
-		this.el = document.createElement('div');
-		this.el.classList.add('mind-map');
+		// this.root.mount(this);
+	}
+
+	update() {
+		/**
+		 * this.renderer.update(this)
+		 * update self
+		 */
+	}
+
+	render() {
+		// should only be called once
+		// Get dom of it's children, and append to board
+
+		// Listen to events
+		this.dom = document.createElement('div');
+		this.dom.classList.add('mindmap');
 		this.board = document.createElement('div');
-		this.board.classList.add('mind-map_board');
+		this.board.classList.add('mindmap_board');
 		this.connections = document.createElement('div');
-		this.connections.classList.add('mind-map_connections');
+		this.connections.classList.add('mindmap_connections');
 		for (let e of [this.board, this.connections]) {
-			this.el.appendChild(e);
+			this.dom.appendChild(e);
 		}
-		this.root.mount(this);
+		this.board.appendChild(this.root.render());
+		// render children
+		return this.dom;
 	}
 
 	mount(port: HTMLElement) {
-		port.appendChild(this.el);
+		port.appendChild(this.render());
+		// this.lifecycle.emit("mounted")
+
 		this.layout.update(this.root);
+
+		/**
+		 * const rendered = this.renderer.render(this)
+		 * port.appendChild(rendered)
+		 * this.layout.update(this)
+		 */
 	}
 }
 

@@ -1,0 +1,24 @@
+.topic-container {
+	position: absolute;
+	overflow: visible;
+}
+
+.topic {
+	position: relative;
+	color: #8f8d7d;
+	border: 3px solid #8f8d7d;
+	padding: 5px 10px;
+	max-width: 200px;
+	cursor: pointer;
+}
+
+.topic:hover {
+	border-color: yellow;
+}
+
+.branch-connections {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+}

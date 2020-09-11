@@ -1,5 +1,5 @@
-import Topic from './topic';
-import MindMap from './mindmap';
+import Topic from 'topic';
+import MindMap from 'mindmap';
 
 class Layout {
 	protected bBoxes: {
@@ -78,8 +78,8 @@ class Layout {
 
 			let top = pos[1] + offsetTop + offsetSibling + childBBox[1] / 2;
 
-			child.el.style.left = left + 'px';
-			child.el.style.top = top + 'px';
+			child.dom.style.left = left + 'px';
+			child.dom.style.top = top + 'px';
 
 			offsetTop += childBBox[1] + offsetSibling;
 			offsetSibling = this.offsetSibling;

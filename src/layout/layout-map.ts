@@ -1,4 +1,4 @@
-import Topic from './topic';
+import Topic from 'topic';
 import Layout from './layout';
 
 class MapLayout extends Layout {
@@ -17,8 +17,8 @@ class MapLayout extends Layout {
 
 	layoutRoot(root: Topic, pos: number[]) {
 		let topicBox = root.getBox();
-		root.el.style.left = pos[0] + 'px';
-		root.el.style.top = pos[1] + 'px';
+		root.dom.style.left = pos[0] + 'px';
+		root.dom.style.top = pos[1] + 'px';
 
 		let rightChildren = root.children.slice(0, root.children.length / 2);
 		let leftChildren = root.children.slice(

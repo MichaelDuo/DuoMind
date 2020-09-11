@@ -5,7 +5,7 @@ class App {
 	el: HTMLElement;
 	private constructor(data: any) {
 		this.el = document.createElement('div');
-		this.mindmap = new MindMap(data);
+		this.mindmap = new MindMap({data});
 
 		this.el.classList.add('app');
 	}

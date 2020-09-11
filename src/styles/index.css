@@ -19,34 +19,10 @@ body {
 	color: white;
 }
 
-.mind-map {
+.mindmap {
 	background-color: #1d1a17;
 	overflow: auto;
 	position: absolute;
 	width: 100%;
 	height: 100%;
-}
-
-.topic {
-	position: absolute;
-	overflow: visible;
-}
-
-.topic-content {
-	color: #8f8d7d;
-	border: 3px solid #8f8d7d;
-	padding: 5px 10px;
-	max-width: 200px;
-	cursor: pointer;
-}
-
-.topic-content:hover {
-	border-color: yellow;
-}
-
-.branch-connections {
-	position: absolute;
-	top: 0;
-	left: 0;
-	pointer-events: none;
 }
