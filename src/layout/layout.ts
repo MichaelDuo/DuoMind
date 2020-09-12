@@ -17,34 +17,15 @@ class Layout {
 	}
 
 	update(topic: Topic) {
-		this.updateBBoxes(topic);
-		let mapCenter = [600, 300];
-		// this.layout(topic, mapCenter, 'right');
-		this.layoutRoot(topic, mapCenter);
-		this.drawConnections(topic);
+		// this.updateBBoxes(topic);
+		// let mapCenter = [600, 300];
+		// // this.layout(topic, mapCenter, 'right');
+		// this.layoutRoot(topic, mapCenter);
+		// this.drawConnections(topic);
 	}
 
 	layoutRoot(topic: Topic, pos: number[]) {
 		// Implement by subclasses
-	}
-
-	// Update Branch Box
-	updateBBoxes(topic: Topic) {
-		let childrenBBox = [0, 0];
-		let offsetSibling = 0;
-		for (let child of topic.children) {
-			this.updateBBoxes(child);
-			let childBox = this.bBoxes[child.id];
-			childrenBBox[0] = Math.max(childrenBBox[0], childBox[0]);
-			childrenBBox[1] += childBox[1] + offsetSibling;
-			offsetSibling = this.verticalGap;
-		}
-		let topicBox = topic.getBox();
-		let box = [
-			childrenBBox[0] + topicBox[0] + this.horizontalGap,
-			Math.max(topicBox[1], childrenBBox[1]),
-		];
-		this.bBoxes[topic.id] = box;
 	}
 
 	getMapRect() {
@@ -54,58 +35,8 @@ class Layout {
 		// return [width, height]
 	}
 
-	/*
-		pos is an array of 2, which is the start point of the children layout box
-	*/
-	layoutChildren(children: Topic[], pos: number[], direction = 'right') {
-		const leftStart = pos[0];
-		const topStart = pos[1];
-
-		let offsetTop = 0; // cumulated top offset
-
-		for (let i = 0; i < children.length; i++) {
-			const child = children[i];
-			const verticalGap = i == 0 ? 0 : this.verticalGap;
-			let childBBox = this.bBoxes[child.id];
-			let childTopicBox = child.getBox();
-
-			if (direction == 'right') {
-				// child.childrenContainer.style.left = this.horizontalGap + 'px';
-				const top =
-					topStart + offsetTop + verticalGap + childBBox[1] / 2;
-
-				this.layoutChildren(
-					child.children,
-					[childTopicBox[0] + this.horizontalGap, -childBBox[1] / 2],
-					direction
-				);
-
-				offsetTop += childBBox[1] + verticalGap;
-
-				// update dom
-				child.dom.style.left = leftStart + 'px';
-				child.dom.style.top = top + 'px';
-			} else if (direction == 'left') {
-				const top =
-					topStart + offsetTop + verticalGap + childBBox[1] / 2;
-
-				this.layoutChildren(
-					child.children,
-					[-this.horizontalGap, -childBBox[1] / 2],
-					direction
-				);
-
-				offsetTop += childBBox[1] + verticalGap;
-
-				// update dom
-				child.dom.style.left = pos[0] - childTopicBox[0] + 'px';
-				child.dom.style.top = top + 'px';
-			}
-		}
-	}
-
 	// @return: bounding box of layouted topic
-	layout2(topic: Topic, direction: 'left' | 'right') {
+	layoutTopic(topic: Topic, direction: 'left' | 'right') {
 		let topicBox = topic.getBox();
 
 		let dirToCssKey: {[key: string]: 'left' | 'right'} = {
@@ -120,12 +51,13 @@ class Layout {
 		for (let i = 0; i < topic.children.length; i++) {
 			const child = topic.children[i];
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
-			const bbox = this.layout2(child, direction);
+			const bbox = this.layoutTopic(child, direction);
 			childrenTotalHeight += bbox[1] + verticalGap;
 			childrenMaxWidth = Math.max(childrenMaxWidth, bbox[0]);
 			bBoxes.push(bbox);
 		}
 
+		// position children
 		let offsetTop = 0;
 		for (let i = 0; i < topic.children.length; i++) {
 			const child = topic.children[i];
@@ -138,19 +70,24 @@ class Layout {
 			offsetTop += bBoxes[i][1] + verticalGap;
 		}
 
-		// layout children in topic context
+		// calculate bbox
 		let bboxWidth =
 			topicBox[0] +
 			(childrenMaxWidth ? childrenMaxWidth + this.horizontalGap : 0);
 		let bboxHeight = Math.max(topicBox[1], childrenTotalHeight);
 
+		// update bbox cache
+		this.bBoxes[topic.id] = [bboxWidth, bboxHeight];
+
+		// position topicEl
 		topic.topicEl.style.top = bboxHeight / 2 - topicBox[1] / 2 + 'px';
 		topic.topicEl.style[dirToCssKey[direction]] = 0 + 'px';
 
+		// set container dimension
 		topic.dom.style.width = bboxWidth + 'px';
 		topic.dom.style.height = bboxHeight + 'px';
 
-		// set children container dimensions
+		// set children-container dimensions
 		topic.childrenContainer.style.top = '0px';
 		topic.childrenContainer.style[dirToCssKey[direction]] =
 			topicBox[0] + this.horizontalGap + 'px';
@@ -158,6 +95,18 @@ class Layout {
 		topic.childrenContainer.style.height = childrenTotalHeight + 'px';
 
 		return [bboxWidth, bboxHeight]; // width and height
+	}
+
+	centerMap() {
+		const port = this.mindmap.board;
+		this.mindmap.root.dom.style.left =
+			port.offsetWidth / 2 -
+			this.bBoxes[this.mindmap.root.id][0] / 2 +
+			'px';
+		this.mindmap.root.dom.style.top =
+			port.offsetHeight / 2 -
+			this.bBoxes[this.mindmap.root.id][1] / 2 +
+			'px';
 	}
 
 	anchorCanvas(topic: Topic) {

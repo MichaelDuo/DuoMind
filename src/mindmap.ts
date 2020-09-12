@@ -37,7 +37,7 @@ class MindMap extends MindMapI {
 		this.dom = document.createElement('div');
 		this.dom.classList.add('mindmap');
 		this.board = document.createElement('div');
-		this.board.classList.add('mindmap_board');
+		this.board.classList.add('mindmap-board');
 		this.connections = document.createElement('div');
 		this.connections.classList.add('mindmap_connections');
 		for (let e of [this.board, this.connections]) {
@@ -53,6 +53,7 @@ class MindMap extends MindMapI {
 		// this.lifecycle.emit("mounted")
 
 		this.layout.update(this.root);
+		this.layout.centerMap();
 
 		/**
 		 * const rendered = this.renderer.render(this)
