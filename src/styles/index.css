@@ -20,7 +20,7 @@ body {
 
 .mindmap {
 	background-color: #1d1a17;
-	overflow: auto;
+	overflow: hidden;
 	position: absolute;
 	width: 100%;
 	height: 100%;

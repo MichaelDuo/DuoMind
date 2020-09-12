@@ -51,6 +51,14 @@ class MindMap extends MindMapI {
 	mount(port: HTMLElement) {
 		port.appendChild(this.render());
 		// this.lifecycle.emit("mounted")
+		// setTimeout(() => {
+		// 	this.layout.update(this.root);
+		// 	setTimeout(() => {
+		// 		this.layout.update(this.root);
+		// 		this.layout.centerMap();
+		// 	}, 1000);
+		// 	this.layout.centerMap();
+		// }, 1000);
 
 		this.layout.update(this.root);
 		this.layout.centerMap();

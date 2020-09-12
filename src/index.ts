@@ -2,13 +2,13 @@ import './styles/index.css';
 import App from './app';
 
 let data = {
-	title: '0',
+	title: 'Duo-Mindmap Layout Algorithm',
 	children: [
 		{
 			title: '0.0',
 			children: [
 				{
-					title: '0.0.0',
+					title: '0.0.0 Duo-Mindmap Layout Alorithm layout children',
 				},
 				{
 					title: '0.0.1',
@@ -26,7 +26,7 @@ let data = {
 									title: '0.1.1.0',
 								},
 								{
-									title: '0.1.1.1',
+									title: 'Deep nested children layout test',
 								},
 							],
 						},
@@ -69,7 +69,7 @@ let data = {
 							title: '0.1.1.0',
 						},
 						{
-							title: '0.1.1.1',
+							title: 'Left deep nested children layout test',
 						},
 					],
 				},
@@ -100,46 +100,39 @@ let data = {
 let data1 = {
 	title: '0',
 	children: [
+		{
+			title: '0.1',
+			children: [
+				{
+					title:
+						'0.1.1 fejwioajfioe jiofejdwioa jfiodwaji ofgjdiaseojt io4',
+				},
+				{
+					title: '0.1.2',
+				},
+			],
+		},
+		{
+			title: '0.2',
+		},
 		// {
-		// 	title: '0.1',
+		// 	title: '0.2',
 		// 	children: [
 		// 		{
-		// 			title: '0.1.1',
+		// 			title: '0.1.1f fjdlasjfidhsa fdhasiofhdiosajf fdjsaiojfido',
 		// 		},
 		// 		{
 		// 			title: '0.1.2',
 		// 		},
 		// 	],
 		// },
-		{
-			title: '0.2',
-			children: [
-				{
-					title: '0.1.1',
-				},
-				{
-					title: '0.1.2',
-				},
-			],
-		},
-		{
-			title: '0.2',
-			children: [
-				{
-					title: '0.1.1',
-				},
-				{
-					title: '0.1.2',
-				},
-			],
-		},
-		{
-			title: '0.2',
-			children: [],
-		},
-		{
-			title: '0.1',
-		},
+		// {
+		// 	title: '0.2',
+		// 	children: [],
+		// },
+		// {
+		// 	title: '0.1',
+		// },
 		// {title: '0.2'},
 		// {title: '0.333343243'},
 		// {title: '0.4'},

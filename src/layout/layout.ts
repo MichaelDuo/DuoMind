@@ -25,7 +25,7 @@ class Layout {
 	}
 
 	layoutRoot(topic: Topic, pos: number[]) {
-		// Implement by subclasses
+		throw new Error('"layoutRoot" method should implement in subclass');
 	}
 
 	getMapRect() {

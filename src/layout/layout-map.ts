@@ -3,15 +3,15 @@ import Layout from './layout';
 
 class MapLayout extends Layout {
 	update(root: Topic) {
-		// this.updateBBoxes(root);
-		// let mapCenter = [600, 300];
 		this.layoutRoot(root);
+
+		// setTimeout(() => this.layoutRoot(root), 0);
+		// this.layoutRoot(root);
+		// this.layoutRoot(root);
 		// this.drawConnections(root);
 	}
 
 	layoutRoot(root: Topic) {
-		const topicBox = root.getBox();
-
 		const LRSplitIndex = Math.floor(root.children.length / 2);
 		const rightChildren = root.children.slice(0, LRSplitIndex);
 		const leftChildren = root.children.slice(
@@ -42,6 +42,9 @@ class MapLayout extends Layout {
 			LBBoxes.push(bbox);
 		}
 
+		const topicBox = root.getBox();
+		console.log(topicBox);
+		// debugger;
 		// calculate bbox
 		const bboxWidth =
 			topicBox[0] + LWidth + RWidth + this.horizontalGap * 2;

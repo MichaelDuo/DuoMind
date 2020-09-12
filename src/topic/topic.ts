@@ -87,6 +87,10 @@ class Topic {
 
 		this.text.innerText = this.title;
 
+		// make sure child have enough space to grow, the max-width is 200px
+		this.dom.style.width = '500px';
+		this.dom.style.height = '500px';
+
 		this.dom.appendChild(this.topicEl);
 		this.dom.appendChild(this.canvas);
 		this.dom.appendChild(this.childrenContainer);
