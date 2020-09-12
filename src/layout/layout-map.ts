@@ -16,6 +16,12 @@ class MapLayout extends Layout {
 	}
 
 	layoutRoot(root: Topic, pos: number[]) {
+		const bbox = this.layout2(root, 'right');
+		// this.layout2(root.children[0], 'right');
+		root.dom.style.left = '300px';
+		root.dom.style.top = '300px';
+		// console.log(bbox);
+		return;
 		let topicBox = root.getBox();
 		root.dom.style.left = pos[0] + 'px';
 		root.dom.style.top = pos[1] + 'px';
@@ -42,24 +48,17 @@ class MapLayout extends Layout {
 			[0, 0]
 		);
 
-		// TODO: get position of root
-		// x: leftBBox[0] + offset
-		// y: max(leftBBox[1], rightBBox[1]) / 2 - root.box.height/2
-
 		// Right branches
 		this.layoutChildren(
 			rightChildren,
-			[
-				pos[0] + topicBox[0] + this.offsetChildren,
-				pos[1] - rightBBox[1] / 2,
-			],
+			[topicBox[0] + this.horizontalGap, -rightBBox[1] / 2],
 			'right'
 		);
 
 		// Left branches
 		this.layoutChildren(
 			leftChildren,
-			[pos[0] - this.offsetChildren, pos[1] - leftBBox[1] / 2],
+			[-this.horizontalGap, -leftBBox[1] / 2],
 			'left'
 		);
 	}

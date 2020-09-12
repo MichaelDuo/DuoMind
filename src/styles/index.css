@@ -4,7 +4,6 @@ body {
 
 .app * {
 	box-sizing: border-box;
-	overflow: hidden; /* prevent margin collapse */
 }
 
 .app-name {

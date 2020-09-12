@@ -18,6 +18,7 @@ class Topic {
 	topicEl!: HTMLElement;
 	text!: HTMLElement;
 	canvas!: HTMLCanvasElement;
+	childrenContainer!: HTMLElement;
 
 	constructor(topicData: TopicData) {
 		this.id = topicData.id ? topicData.id : uuidv4();
@@ -77,19 +78,22 @@ class Topic {
 		this.topicEl = document.createElement('div');
 		this.text = document.createElement('div');
 		this.canvas = document.createElement('canvas');
+		this.childrenContainer = document.createElement('div');
 
 		this.dom.classList.add('topic-container');
 		this.topicEl.classList.add('topic');
 		this.canvas.classList.add('branch-connections');
+		this.childrenContainer.classList.add('topic-children-container');
 
 		this.text.innerText = this.title;
 
 		this.dom.appendChild(this.topicEl);
 		this.dom.appendChild(this.canvas);
+		this.dom.appendChild(this.childrenContainer);
 		this.topicEl.appendChild(this.text);
 
 		for (let child of this.children) {
-			this.dom.appendChild(child.render());
+			this.childrenContainer.appendChild(child.render());
 		}
 
 		return this.dom;

@@ -1,10 +1,9 @@
 .topic-container {
 	position: absolute;
-	overflow: visible;
 }
 
 .topic {
-	position: relative;
+	position: absolute;
 	color: #8f8d7d;
 	border: 3px solid #8f8d7d;
 	padding: 5px 10px;
@@ -14,6 +13,10 @@
 
 .topic:hover {
 	border-color: yellow;
+}
+
+.topic-children-container {
+	position: absolute;
 }
 
 .branch-connections {
