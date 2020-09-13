@@ -6,9 +6,11 @@
 	position: absolute;
 	color: #8f8d7d;
 	border: 3px solid #8f8d7d;
+	background-color: #1d1a17;
 	padding: 5px 10px;
 	max-width: 200px;
 	cursor: pointer;
+	z-index: 9;
 }
 
 .topic:hover {

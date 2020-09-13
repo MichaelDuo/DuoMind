@@ -19,7 +19,7 @@ class MindMap extends MindMapI {
 		super(data);
 		this.root = Topic.fromJSON(data);
 		this.layout = new MapLayout(this);
-		// this.root.mount(this);
+		// this.eventBus = new eventBus(this);
 	}
 
 	update() {
@@ -32,8 +32,6 @@ class MindMap extends MindMapI {
 	render() {
 		// should only be called once
 		// Get dom of it's children, and append to board
-
-		// Listen to events
 		this.dom = document.createElement('div');
 		this.dom.classList.add('mindmap');
 		this.board = document.createElement('div');
@@ -44,30 +42,27 @@ class MindMap extends MindMapI {
 			this.dom.appendChild(e);
 		}
 		this.board.appendChild(this.root.render());
-		// render children
+
+		// this.dom.addEventListener('click', (e) => {
+		// 	console.log(e);
+		// });
 		return this.dom;
 	}
 
 	mount(port: HTMLElement) {
-		port.appendChild(this.render());
-		// this.lifecycle.emit("mounted")
-		// setTimeout(() => {
-		// 	this.layout.update(this.root);
-		// 	setTimeout(() => {
-		// 		this.layout.update(this.root);
-		// 		this.layout.centerMap();
-		// 	}, 1000);
-		// 	this.layout.centerMap();
-		// }, 1000);
+		const rendered = this.render();
+		// TODO: attach event
 
+		// mount
+		port.appendChild(rendered);
+
+		// TODO: emit mount event
+
+		// layout map
 		this.layout.update(this.root);
-		this.layout.centerMap();
 
-		/**
-		 * const rendered = this.renderer.render(this)
-		 * port.appendChild(rendered)
-		 * this.layout.update(this)
-		 */
+		// position map
+		this.layout.centerMap();
 	}
 }
 

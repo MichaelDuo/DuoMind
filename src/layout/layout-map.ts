@@ -4,11 +4,7 @@ import Layout from './layout';
 class MapLayout extends Layout {
 	update(root: Topic) {
 		this.layoutRoot(root);
-
-		// setTimeout(() => this.layoutRoot(root), 0);
-		// this.layoutRoot(root);
-		// this.layoutRoot(root);
-		// this.drawConnections(root);
+		this.drawConnections(root);
 	}
 
 	layoutRoot(root: Topic) {
@@ -43,7 +39,6 @@ class MapLayout extends Layout {
 		}
 
 		const topicBox = root.getBox();
-		console.log(topicBox);
 		// debugger;
 		// calculate bbox
 		const bboxWidth =

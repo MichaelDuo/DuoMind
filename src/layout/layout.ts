@@ -1,6 +1,25 @@
 import Topic from 'topic';
 import MindMap from 'mindmap';
 
+/**
+      Topic Container, canvas
++-----------+---------------------+
+|           |                     |
++--------+  |                     |
+|  Topic |  | Children Container  |
++--------+  |                     |
+|           |                     |
++-----------+---------------------+
+ */
+
+export interface LayoutAble {
+	getContainer(): HTMLElement;
+	getTopic(): HTMLElement;
+	getChildrenContainer(): HTMLElement;
+	getCanvas(): HTMLElement;
+	getViewPort(): HTMLElement;
+}
+
 class Layout {
 	protected bBoxes: {
 		[key: string]: number[];
@@ -26,13 +45,6 @@ class Layout {
 
 	layoutRoot(topic: Topic, pos: number[]) {
 		throw new Error('"layoutRoot" method should implement in subclass');
-	}
-
-	getMapRect() {
-		let root = this.mindmap.root;
-		// get root BBox
-		// get root postion
-		// return [width, height]
 	}
 
 	// @return: bounding box of layouted topic
@@ -113,23 +125,51 @@ class Layout {
 		let bbox = this.bBoxes[topic.id];
 		topic.canvas.width = bbox[0];
 		topic.canvas.height = bbox[1];
-		// topic.canvas.x =
+		topic.canvas.style.left = '0px';
+		topic.canvas.style.top = '0px';
 	}
 
 	drawConnections(topic: Topic) {
 		this.anchorCanvas(topic);
 		const ctx = topic.canvas.getContext('2d');
-		console.log(ctx);
+
 		if (!ctx) {
 			console.error('Can not get context');
 			return;
 		}
-		ctx.strokeStyle = 'rgb(0,200,0)';
+		ctx.strokeStyle = 'rgba(143, 141, 125, 1)';
+
+		const canvasRect = topic.canvas.getBoundingClientRect();
+		const topicRect = topic.topicEl.getBoundingClientRect();
+
+		const topicPos = [
+			topicRect.left - canvasRect.left + topic.topicEl.offsetWidth / 2,
+			topicRect.top - canvasRect.top + topic.topicEl.offsetHeight / 2,
+		];
 
 		for (let child of topic.children) {
+			this.drawConnections(child);
+			const childRect = child.topicEl.getBoundingClientRect();
+
+			const childPos = [
+				childRect.left - canvasRect.left,
+				childRect.top - canvasRect.top + child.topicEl.offsetHeight / 2,
+			];
+
 			ctx.beginPath();
-			ctx.moveTo(0, 0);
-			ctx.lineTo(100, 150);
+
+			if (childPos[0] > topicPos[0]) {
+				// right
+				ctx.moveTo(topicPos[0], topicPos[1]); // topic center
+				ctx.lineTo(childPos[0], childPos[1]); // child center
+			} else {
+				// left
+				ctx.moveTo(topicPos[0], topicPos[1]); // topic center
+				ctx.lineTo(
+					childPos[0] + child.topicEl.offsetWidth,
+					childPos[1]
+				); // child center
+			}
 			ctx.stroke();
 		}
 	}
