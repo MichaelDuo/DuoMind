@@ -2,13 +2,13 @@ import './styles/index.css';
 import App from './app';
 
 let data = {
-	title: 'Duo-Mindmap Layout Algorithm',
+	title: 'Mindmap Layout Test',
 	children: [
 		{
 			title: '0.0',
 			children: [
 				{
-					title: '0.0.0 Duo-Mindmap Layout Alorithm layout children',
+					title: '0.0.0 layout children',
 				},
 				{
 					title: '0.0.1',
@@ -17,16 +17,17 @@ let data = {
 					title: '0.0.2',
 					children: [
 						{
-							title: '0.0.2.0',
+							title:
+								'0.0.2.0 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',
 						},
 						{
 							title: '0.0.2.1',
 							children: [
 								{
-									title: '0.1.1.0',
+									title: '0.0.2.1.0',
 								},
 								{
-									title: 'Deep nested children layout test',
+									title: '0.0.2.1.1',
 								},
 							],
 						},
@@ -41,7 +42,8 @@ let data = {
 			title: '0.1',
 			children: [
 				{
-					title: '0.1.0',
+					title:
+						'0.1.0 consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.',
 				},
 				{
 					title: '0.1.1',
@@ -57,38 +59,39 @@ let data = {
 			],
 		},
 		{
-			title: '0.1',
+			title: '0.2',
 			children: [
 				{
-					title: '0.1.0',
+					title: '0.2.0',
 				},
 				{
-					title: '0.1.1',
+					title: '0.2.1',
 					children: [
 						{
-							title: '0.1.1.0',
+							title: '0.2.1.0',
 						},
 						{
-							title: 'Left deep nested children layout test',
+							title: '0.2.1.1',
 						},
 					],
 				},
 			],
 		},
 		{
-			title: '0.1',
+			title: '0.3',
 			children: [
 				{
-					title: '0.1.0',
+					title: '0.3.0',
 				},
 				{
-					title: '0.1.1',
+					title: '0.3.1',
 					children: [
 						{
-							title: '0.1.1.0',
+							title:
+								'0.3.1.0 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
 						},
 						{
-							title: '0.1.1.1',
+							title: '0.3.1.1',
 						},
 					],
 				},

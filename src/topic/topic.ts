@@ -71,7 +71,9 @@ class Topic {
 		// 	throw new Error('Topic not mounted');
 		// } else {
 		// }
-		return [this.topicEl.offsetWidth, this.topicEl.offsetHeight];
+		const rect = this.topicEl.getBoundingClientRect();
+		return [rect.width, rect.height];
+		// return [this.topicEl.offsetWidth, this.topicEl.offsetHeight];
 	}
 
 	public render() {

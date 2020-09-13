@@ -57,7 +57,7 @@ class MindMap extends MindMapI {
 		port.appendChild(rendered);
 
 		// TODO: emit mount event
-
+		// return;
 		// layout map
 		this.layout.update(this.root);
 
