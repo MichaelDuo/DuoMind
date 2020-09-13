@@ -14,6 +14,7 @@ This project is still under development
 -   [x] Map layout
 -   [ ] Event module
 -   [ ] Selection module
+-   [ ] Editable topic
 -   [ ] Command module
 -   [ ] Drag and drop module
 
