@@ -8,7 +8,7 @@ This project is still under development
 
 ## Roadmap
 
--   [x] Topic Rendering
+-   [x] Topic rendering
 -   [x] Left layout
 -   [x] Right layout
 -   [x] Map layout
@@ -16,6 +16,33 @@ This project is still under development
 -   [ ] Selection module
 -   [ ] Command module
 -   [ ] Drag and drop module
+
+## Usage
+
+```javascript
+App.fromJSON(mindmapData);
+```
+
+## mindmap data example
+
+```javascript
+let data1 = {
+	title: '0',
+	children: [
+		{
+			title: '0.1',
+			children: [
+				{
+					title: '0.1.1',
+				},
+				{
+					title: '0.1.2',
+				},
+			],
+		},
+	],
+};
+```
 
 ## install dependencies
 
