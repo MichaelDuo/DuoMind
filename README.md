@@ -17,6 +17,7 @@ This project is still under development
 -   [ ] Editable topic
 -   [ ] Command module
 -   [ ] Drag and drop module
+-   [ ] Rich text support
 
 ## Usage
 

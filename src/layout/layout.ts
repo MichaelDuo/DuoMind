@@ -25,8 +25,8 @@ class Layout {
 		[key: string]: number[];
 	};
 
-	horizontalGap = 20; // Topic Horizontal Gap
-	verticalGap = 1; // Topic Vertical Gap
+	horizontalGap = 25; // Topic Horizontal Gap
+	verticalGap = 15; // Topic Vertical Gap
 	mindmap: MindMap;
 
 	constructor(mindmap: MindMap) {
