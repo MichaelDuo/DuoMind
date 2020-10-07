@@ -44,6 +44,29 @@ class EventBus {
 			this.topics[action.topicId].onAction(action);
 		}
 	}
+
+	initEvents() {
+		this.mindmap.dom.addEventListener('click', (event) => {
+			let clickOnTopic = false;
+			let target = event.target as HTMLElement | null;
+			while (target && target != this.mindmap.dom) {
+				if (target.classList.contains('topic')) {
+					clickOnTopic = true;
+					break;
+				}
+				target = target.parentNode as HTMLElement;
+			}
+			if (clickOnTopic) {
+				this.emit('click:topic', {event, topicId: target!.id});
+			} else {
+				this.emit('click:mindmap', {event});
+			}
+		});
+
+		document.addEventListener('keydown', (event) => {
+			this.emit(`keydown:${event.key}`, {event});
+		});
+	}
 }
 
 export default EventBus;

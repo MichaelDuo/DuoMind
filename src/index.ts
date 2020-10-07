@@ -101,23 +101,22 @@ let data = {
 };
 
 let data1 = {
-	title: '0',
+	title: 'Mindmap Layout Demo feiwjafioe jfioejw iofj ieow',
 	children: [
 		{
 			title: '0.1',
 			children: [
 				{
-					title:
-						'0.1.1 fejwioajfioe jiofejdwioa jfiodwaji ofgjdiaseojt io4',
+					title: '0.1.1',
 				},
 				{
 					title: '0.1.2',
 				},
 			],
 		},
-		// {
-		// 	title: '0.2',
-		// },
+		{
+			title: '0.2',
+		},
 		// {
 		// 	title: '0.2',
 		// 	children: [

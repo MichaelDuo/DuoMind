@@ -11,21 +11,12 @@ export default class Selections {
 	}
 
 	initEvents() {
-		this.mindmap.dom.addEventListener('click', (event) => {
-			let found = false;
-			let target = event.target as HTMLElement | null;
-			while (target && target != this.mindmap.dom) {
-				if (target.classList.contains('topic')) {
-					found = true;
-					break;
-				}
-				target = target.parentNode as HTMLElement;
-			}
-			if (found) {
-				this.makeSelection([target!.id]);
-			} else {
-				this.clearSelection();
-			}
+		this.mindmap.eventBus.on('click:topic', ({topicId}) => {
+			this.makeSelection([topicId]);
+		});
+
+		this.mindmap.eventBus.on('click:mindmap', ({topicId}) => {
+			this.clearSelection();
 		});
 
 		this.mindmap.eventBus.on('new:topic', (topic: Topic) => {

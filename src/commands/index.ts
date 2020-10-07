@@ -7,25 +7,22 @@ class Commands {
 	}
 
 	initEvents() {
-		const interestedKeys = new Set(['Tab', 'Backspace', 'Enter']);
-		document.addEventListener('keydown', (e) => {
-			if (interestedKeys.has(e.key)) {
-				e.preventDefault();
-				e.stopPropagation();
-			}
-			switch (e.key) {
-				case 'Tab':
-					this.addChild();
-					break;
-				case 'Backspace':
-					this.deleteSelection();
-					break;
-				case 'Enter':
-					this.addSibling();
-					break;
-				default:
-					break;
-			}
+		this.mindmap.eventBus.on('keydown:Tab', ({event}) => {
+			event.preventDefault();
+			event.stopPropagation();
+			this.addChild();
+		});
+
+		this.mindmap.eventBus.on('keydown:Backspace', ({event}) => {
+			event.preventDefault();
+			event.stopPropagation();
+			this.deleteSelection();
+		});
+
+		this.mindmap.eventBus.on('keydown:Enter', ({event}) => {
+			event.preventDefault();
+			event.stopPropagation();
+			this.addSibling();
 		});
 	}
 

@@ -27,6 +27,8 @@ class MindMap {
 		this.initDom();
 		this.selection = new Selection(this);
 		this.commands = new Commands(this);
+
+		this.eventBus.initEvents();
 	}
 
 	update() {
