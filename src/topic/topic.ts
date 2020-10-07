@@ -65,6 +65,7 @@ class Topic {
 
 		this.dom.classList.add('topic-container');
 		this.topicEl.classList.add('topic');
+		this.topicEl.id = this.id;
 		this.canvas.classList.add('branch-connections');
 		this.childrenContainer.classList.add('topic-children-container');
 
