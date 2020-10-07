@@ -19,6 +19,7 @@
 	},
 	"homepage": "https://github.com/MichaelDuo/mindmap#readme",
 	"devDependencies": {
+		"@types/lodash": "^4.14.161",
 		"@types/uuid": "^7.0.0",
 		"css-loader": "^3.4.2",
 		"html-webpack-plugin": "^3.2.0",
@@ -31,6 +32,7 @@
 		"webpack-dev-server": "^3.11.0"
 	},
 	"dependencies": {
+		"lodash": "^4.17.20",
 		"uuid": "^7.0.2"
 	}
 }

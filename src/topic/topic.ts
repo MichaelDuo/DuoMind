@@ -5,7 +5,6 @@ interface TopicData {
 	id?: string;
 	title: string;
 	children: Array<Topic>;
-	parent?: Topic;
 }
 
 class Topic {
@@ -21,27 +20,42 @@ class Topic {
 	canvas!: HTMLCanvasElement;
 	childrenContainer!: HTMLElement;
 
-	constructor(topicData: TopicData, mindmap: MindMap) {
+	constructor(
+		topicData: TopicData,
+		context: {mindmap: MindMap; parent: Topic | null}
+	) {
 		this.id = topicData.id ? topicData.id : uuidv4();
 		this.title = topicData.title;
 		this.children = topicData.children;
-		this.parent = topicData.parent ? topicData.parent : null;
-		this.mindmap = mindmap;
+		this.parent = context.parent;
+		this.mindmap = context.mindmap;
 		this.mindmap.eventBus.register(this);
 	}
 
-	static fromJSON(topicJSON: any, mindmap: MindMap): Topic {
+	static fromJSON(
+		topicJSON: any,
+		context: {mindmap: MindMap; parent: Topic | null}
+	): Topic {
 		let title: string = topicJSON.title;
+
 		let children: Array<Topic> = [];
+
+		const topic = new Topic({title, children}, context);
 
 		let childrenArr: Array<any> = topicJSON.children;
 		if (childrenArr && childrenArr.length) {
 			children = childrenArr
-				.map((v) => Topic.fromJSON({...v, parent: this}, mindmap))
+				.map((v) =>
+					Topic.fromJSON(
+						{...v, parent: this},
+						{mindmap: context.mindmap, parent: topic}
+					)
+				)
 				.filter((v) => v != null);
 		}
 
-		return new Topic({title, children}, mindmap);
+		topic.children = children;
+		return topic;
 	}
 
 	public printTitle(): void {
@@ -51,6 +65,14 @@ class Topic {
 	public getBox() {
 		const rect = this.topicEl.getBoundingClientRect();
 		return [rect.width, rect.height];
+	}
+
+	// Only remove from memory, to fully remove, call destroy method
+	public removeChild(child: Topic) {
+		const idx = this.children.indexOf(child);
+		if (idx >= 0) {
+			this.children.splice(idx, 1);
+		}
 	}
 
 	public initDom() {
@@ -84,6 +106,20 @@ class Topic {
 		return this.dom;
 	}
 
+	public destroy(emit = true) {
+		if (this.parent) {
+			for (let child of [...this.children]) {
+				child.destroy(false);
+			}
+			this.mindmap.eventBus.unregister(this);
+			this.parent.removeChild(this);
+			this.dom.remove();
+			if (emit) {
+				this.mindmap.eventBus.emit('update');
+			}
+		}
+	}
+
 	public onAction(action: {type: string; payload?: any}): void {
 		switch (action.type) {
 			case 'select':
@@ -99,6 +135,7 @@ class Topic {
 				this.addSibling();
 				break;
 			case 'delete':
+				this.destroy();
 				break;
 			default:
 				console.log('Unhandled action: ', action);
@@ -112,7 +149,7 @@ class Topic {
 				title: 'New Topic',
 				children: [],
 			},
-			this.mindmap
+			{mindmap: this.mindmap, parent: this}
 		);
 		this.children.push(newChild);
 		this.childrenContainer.appendChild(newChild.initDom());
@@ -120,21 +157,22 @@ class Topic {
 	}
 
 	public addSibling() {
-		const newChild = new Topic(
+		const newSibling = new Topic(
 			{
 				title: 'New Topic',
 				children: [],
 			},
-			this.mindmap
+			{mindmap: this.mindmap, parent: this.parent}
 		);
-		console.log(this.parent);
-		this.parent?.children.push(newChild);
-		this.parent?.childrenContainer.appendChild(newChild.initDom());
-		this.mindmap.eventBus.emit('update');
-	}
-
-	public delete() {
-		// this.parent?.deleteChild(this);
+		if (this.parent) {
+			this.parent.children.splice(
+				this.parent.children.indexOf(this) + 1,
+				0,
+				newSibling
+			);
+			this.parent.childrenContainer.appendChild(newSibling.initDom());
+			this.mindmap.eventBus.emit('update');
+		}
 	}
 }
 

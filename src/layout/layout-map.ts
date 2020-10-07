@@ -3,6 +3,7 @@ import Layout from './layout';
 
 class MapLayout extends Layout {
 	update(root: Topic) {
+		console.log('update');
 		this.layoutRoot(root);
 		this.drawConnections(root);
 	}

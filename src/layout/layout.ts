@@ -1,5 +1,6 @@
 import Topic from 'topic';
 import MindMap from 'mindmap';
+import {debounce} from 'lodash';
 
 /**
       Topic Container, canvas
@@ -52,6 +53,12 @@ class Layout {
 
 	// @return: bounding box of layouted topic
 	layoutTopic(topic: Topic, direction: 'left' | 'right') {
+		// Reset styles
+		for (const property of ['left', 'right']) {
+			topic.dom.style.removeProperty(property);
+			topic.topicEl.style.removeProperty(property);
+		}
+
 		let topicBox = topic.getBox();
 
 		let dirToCssKey: {[key: string]: 'left' | 'right'} = {

@@ -23,7 +23,7 @@ class MindMap {
 		const {data} = config;
 		this.eventBus = new EventBus(this);
 		this.layout = new MapLayout(this);
-		this.root = Topic.fromJSON(data, this);
+		this.root = Topic.fromJSON(data, {mindmap: this, parent: null});
 		this.initDom();
 		this.selection = new Selection(this);
 		this.commands = new Commands(this);
