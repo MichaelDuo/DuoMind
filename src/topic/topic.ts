@@ -44,20 +44,6 @@ class Topic {
 		return new Topic({title, children}, mindmap);
 	}
 
-	public onAction(action: {type: string; payload?: any}): void {
-		switch (action.type) {
-			case 'select':
-				this.topicEl.classList.add('selected');
-				break;
-			case 'deselect':
-				this.topicEl.classList.remove('selected');
-				break;
-			default:
-				console.log('Unhandled action: ', action);
-				break;
-		}
-	}
-
 	public printTitle(): void {
 		console.log(this.title);
 	}
@@ -96,6 +82,59 @@ class Topic {
 		}
 
 		return this.dom;
+	}
+
+	public onAction(action: {type: string; payload?: any}): void {
+		switch (action.type) {
+			case 'select':
+				this.topicEl.classList.add('selected');
+				break;
+			case 'deselect':
+				this.topicEl.classList.remove('selected');
+				break;
+			case 'addChild':
+				this.addChild();
+				break;
+			case 'addSibling':
+				this.addSibling();
+				break;
+			case 'delete':
+				break;
+			default:
+				console.log('Unhandled action: ', action);
+				break;
+		}
+	}
+
+	public addChild() {
+		const newChild = new Topic(
+			{
+				title: 'New Topic',
+				children: [],
+			},
+			this.mindmap
+		);
+		this.children.push(newChild);
+		this.childrenContainer.appendChild(newChild.initDom());
+		this.mindmap.eventBus.emit('update');
+	}
+
+	public addSibling() {
+		const newChild = new Topic(
+			{
+				title: 'New Topic',
+				children: [],
+			},
+			this.mindmap
+		);
+		console.log(this.parent);
+		this.parent?.children.push(newChild);
+		this.parent?.childrenContainer.appendChild(newChild.initDom());
+		this.mindmap.eventBus.emit('update');
+	}
+
+	public delete() {
+		// this.parent?.deleteChild(this);
 	}
 }
 

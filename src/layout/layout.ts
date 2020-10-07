@@ -34,7 +34,7 @@ class Layout {
 		this.bBoxes = {}; // {id: [width, height]}
 		this.mindmap = mindmap;
 		mindmap.eventBus.on('update', () => {
-			console.log('should update layout');
+			this.update(mindmap.root);
 		});
 	}
 
