@@ -11,20 +11,26 @@ export default class Selections {
 
 	initEvents() {
 		this.mindmap.dom.addEventListener('click', (event) => {
+			let found = false;
 			let target = event.target as HTMLElement | null;
 			while (target && target != this.mindmap.dom) {
 				if (target.classList.contains('topic')) {
-					this.makeSelection([target.id]);
+					found = true;
 					break;
 				}
 				target = target.parentNode as HTMLElement;
+			}
+			if (found) {
+				this.makeSelection([target!.id]);
+			} else {
+				this.clearSelection();
 			}
 		});
 	}
 
 	clearSelection() {
 		for (let topicId of this.selection) {
-			this.mindmap.eventBus.dispatch({topicId, type: 'select'});
+			this.mindmap.eventBus.dispatch({topicId, type: 'deselect'});
 		}
 		this.selection = [];
 	}
@@ -33,7 +39,7 @@ export default class Selections {
 		this.clearSelection();
 		this.selection = topicIds;
 		for (let topicId of this.selection) {
-			this.mindmap.eventBus.dispatch({topicId, type: 'deselect'});
+			this.mindmap.eventBus.dispatch({topicId, type: 'select'});
 		}
 	}
 }

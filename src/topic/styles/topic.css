@@ -17,6 +17,10 @@
 	border-color: yellow;
 }
 
+.topic.selected {
+	border-color: yellow;
+}
+
 .topic-children-container {
 	position: absolute;
 }

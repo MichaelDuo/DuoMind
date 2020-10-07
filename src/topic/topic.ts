@@ -27,6 +27,7 @@ class Topic {
 		this.children = topicData.children;
 		this.parent = topicData.parent ? topicData.parent : null;
 		this.mindmap = mindmap;
+		this.mindmap.eventBus.register(this);
 	}
 
 	static fromJSON(topicJSON: any, mindmap: MindMap): Topic {
@@ -43,8 +44,17 @@ class Topic {
 		return new Topic({title, children}, mindmap);
 	}
 
-	public onAction(action: any): void {
-		console.log(`TopicId: ${this.id}, on action: ${action}`);
+	public onAction(action: {type: string; payload?: any}): void {
+		switch (action.type) {
+			case 'select':
+				this.topicEl.classList.add('selected');
+				break;
+			case 'deselect':
+				this.topicEl.classList.remove('selected');
+				break;
+			default:
+				break;
+		}
 	}
 
 	public printTitle(): void {
