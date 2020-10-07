@@ -1,8 +1,9 @@
 import Topic from './topic';
 import Layout from 'layout/layout';
 import MapLayout from 'layout/layout-map';
-import Selections from 'selections';
+import Selection from 'selection';
 import EventBus from 'eventbus';
+import Commands from 'commands';
 
 interface Config {
 	data: any;
@@ -11,7 +12,8 @@ class MindMap {
 	layout: Layout;
 	root: Topic;
 	eventBus: EventBus;
-	selections: Selections;
+	selection: Selection;
+	commands: Commands;
 
 	dom!: HTMLElement;
 	board!: HTMLElement;
@@ -23,7 +25,8 @@ class MindMap {
 		this.layout = new MapLayout(this);
 		this.root = Topic.fromJSON(data, this);
 		this.initDom();
-		this.selections = new Selections(this);
+		this.selection = new Selection(this);
+		this.commands = new Commands(this);
 	}
 
 	update() {
@@ -34,8 +37,6 @@ class MindMap {
 	}
 
 	initDom() {
-		// should only be called once
-		// Get dom of it's children, and append to board
 		this.dom = document.createElement('div');
 		this.dom.classList.add('mindmap');
 		this.board = document.createElement('div');

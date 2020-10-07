@@ -53,6 +53,7 @@ class Topic {
 				this.topicEl.classList.remove('selected');
 				break;
 			default:
+				console.log('Unhandled action: ', action);
 				break;
 		}
 	}
