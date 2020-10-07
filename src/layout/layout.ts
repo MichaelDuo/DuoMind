@@ -109,8 +109,8 @@ class Layout {
 		topic.dom.style.width = bboxWidth + 'px';
 		topic.dom.style.height = bboxHeight + 'px';
 
-		// set children-container dimensions
-		topic.childrenContainer.style.top = '0px';
+		topic.childrenContainer.style.top =
+			(bboxHeight - childrenTotalHeight) / 2 + 'px';
 		topic.childrenContainer.style[dirToCssKey[direction]] =
 			topicBox[0] + this.horizontalGap + 'px';
 		topic.childrenContainer.style.width = childrenMaxWidth + 'px';
