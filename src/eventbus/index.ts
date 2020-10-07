@@ -39,9 +39,9 @@ class EventBus {
 		delete this.topics[topic.id];
 	}
 
-	dispatch(action: {id: string; payload: any}) {
-		if (this.topics[action.id]) {
-			this.topics[action.id].onAction(action);
+	dispatch(action: {topicId: string; type: string; payload?: any}) {
+		if (this.topics[action.topicId]) {
+			this.topics[action.topicId].onAction(action);
 		}
 	}
 }

@@ -11,29 +11,29 @@ export default class Selections {
 
 	initEvents() {
 		this.mindmap.dom.addEventListener('click', (event) => {
-			let found = false;
 			let target = event.target as HTMLElement | null;
 			while (target && target != this.mindmap.dom) {
 				if (target.classList.contains('topic')) {
-					found = true;
+					this.makeSelection([target.id]);
 					break;
 				}
 				target = target.parentNode as HTMLElement;
-			}
-
-			this.clearSelection();
-			if (found) {
-				this.selection = [target!.id];
-				// TODO: Dispatch actions
 			}
 		});
 	}
 
 	clearSelection() {
 		for (let topicId of this.selection) {
-			// TODO: Dispatch actions
-			console.log(`Clear selection of topicId: ${topicId}`);
+			this.mindmap.eventBus.dispatch({topicId, type: 'select'});
 		}
 		this.selection = [];
+	}
+
+	makeSelection(topicIds: string[]) {
+		this.clearSelection();
+		this.selection = topicIds;
+		for (let topicId of this.selection) {
+			this.mindmap.eventBus.dispatch({topicId, type: 'deselect'});
+		}
 	}
 }
