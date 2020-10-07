@@ -12,7 +12,7 @@ class Topic {
 	id: string;
 	title: string;
 	children: Array<Topic>;
-	mindmap: MindMap | null = null;
+	mindmap: MindMap;
 	parent: Topic | null;
 
 	dom!: HTMLElement;
@@ -21,25 +21,26 @@ class Topic {
 	canvas!: HTMLCanvasElement;
 	childrenContainer!: HTMLElement;
 
-	constructor(topicData: TopicData) {
+	constructor(topicData: TopicData, mindmap: MindMap) {
 		this.id = topicData.id ? topicData.id : uuidv4();
 		this.title = topicData.title;
 		this.children = topicData.children;
 		this.parent = topicData.parent ? topicData.parent : null;
+		this.mindmap = mindmap;
 	}
 
-	static fromJSON(topicJSON: any): Topic {
+	static fromJSON(topicJSON: any, mindmap: MindMap): Topic {
 		let title: string = topicJSON.title;
 		let children: Array<Topic> = [];
 
 		let childrenArr: Array<any> = topicJSON.children;
 		if (childrenArr && childrenArr.length) {
 			children = childrenArr
-				.map((v) => Topic.fromJSON({...v, parent: this}))
+				.map((v) => Topic.fromJSON({...v, parent: this}, mindmap))
 				.filter((v) => v != null);
 		}
 
-		return new Topic({title, children});
+		return new Topic({title, children}, mindmap);
 	}
 
 	public onAction(action: any): void {
@@ -55,7 +56,7 @@ class Topic {
 		return [rect.width, rect.height];
 	}
 
-	public render() {
+	public initDom() {
 		this.dom = document.createElement('div');
 		this.topicEl = document.createElement('div');
 		this.text = document.createElement('div');
@@ -79,7 +80,7 @@ class Topic {
 		this.topicEl.appendChild(this.text);
 
 		for (let child of this.children) {
-			this.childrenContainer.appendChild(child.render());
+			this.childrenContainer.appendChild(child.initDom());
 		}
 
 		return this.dom;

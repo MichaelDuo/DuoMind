@@ -3,7 +3,7 @@ import Topic from 'topic';
 class EventBus {
 	mindmap: MindMap;
 	topics: {[key: string]: Topic} = {};
-	listeners: {[key: string]: any[]} = {};
+	listeners: {[key: string]: ((data: any) => any)[]} = {};
 
 	constructor(mindmap: MindMap) {
 		this.mindmap = mindmap;
@@ -22,7 +22,7 @@ class EventBus {
 		if (i >= 0) this.listeners[event].splice(i, 1);
 	}
 
-	emit(event: string, data: any) {
+	emit(event: string, data?: any) {
 		const events = this.listeners[event];
 		if (events) {
 			events.forEach((listener) => {

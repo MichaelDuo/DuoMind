@@ -20,18 +20,10 @@ class MindMap {
 	constructor(config: Config) {
 		const {data} = config;
 		this.eventBus = new EventBus(this);
-		this.selections = new Selections(this);
 		this.layout = new MapLayout(this);
-
-		this.root = Topic.fromJSON(data);
-
-		this.render();
-		this.init();
-	}
-
-	private init() {
-		// init events
-		// init selections
+		this.root = Topic.fromJSON(data, this);
+		this.initDom();
+		this.selections = new Selections(this);
 	}
 
 	update() {
@@ -41,7 +33,7 @@ class MindMap {
 		 */
 	}
 
-	render() {
+	initDom() {
 		// should only be called once
 		// Get dom of it's children, and append to board
 		this.dom = document.createElement('div');
@@ -53,11 +45,7 @@ class MindMap {
 		for (let e of [this.board, this.connections]) {
 			this.dom.appendChild(e);
 		}
-		this.board.appendChild(this.root.render());
-
-		// this.dom.addEventListener('click', (e) => {
-		// 	console.log(e);
-		// });
+		this.board.appendChild(this.root.initDom());
 		return this.dom;
 	}
 
@@ -66,6 +54,7 @@ class MindMap {
 		port.appendChild(this.dom);
 
 		// TODO: emit mount event
+		this.eventBus.emit('mounted');
 
 		// layout map
 		this.layout.update(this.root);
