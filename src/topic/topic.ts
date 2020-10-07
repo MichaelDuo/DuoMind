@@ -42,38 +42,17 @@ class Topic {
 		return new Topic({title, children});
 	}
 
-	public mount(mindmap: MindMap) {
-		this.mindmap = mindmap;
-		this.mindmap.board.appendChild(this.dom);
-		for (let child of this.children) {
-			child.mount(mindmap);
-		}
-	}
-
-	public unmount() {
-		this.dom.remove();
-		this.mindmap = null;
-		for (let child of this.children) {
-			child.unmount();
-		}
+	public onAction(action: any): void {
+		console.log(`TopicId: ${this.id}, on action: ${action}`);
 	}
 
 	public printTitle(): void {
 		console.log(this.title);
 	}
 
-	public isMounted(): boolean {
-		return this.mindmap != null;
-	}
-
 	public getBox() {
-		// if (!this.isMounted()) {
-		// 	throw new Error('Topic not mounted');
-		// } else {
-		// }
 		const rect = this.topicEl.getBoundingClientRect();
 		return [rect.width, rect.height];
-		// return [this.topicEl.offsetWidth, this.topicEl.offsetHeight];
 	}
 
 	public render() {

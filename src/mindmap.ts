@@ -1,14 +1,17 @@
 import Topic from './topic';
 import Layout from 'layout/layout';
 import MapLayout from 'layout/layout-map';
-import {MindMapI} from './types';
+import Selections from 'selections';
+import EventBus from 'eventbus';
 
 interface Config {
 	data: any;
 }
-class MindMap extends MindMapI {
+class MindMap {
 	layout: Layout;
 	root: Topic;
+	eventBus: EventBus;
+	selections: Selections;
 
 	dom!: HTMLElement;
 	board!: HTMLElement;
@@ -16,10 +19,19 @@ class MindMap extends MindMapI {
 
 	constructor(config: Config) {
 		const {data} = config;
-		super(data);
-		this.root = Topic.fromJSON(data);
+		this.eventBus = new EventBus(this);
+		this.selections = new Selections(this);
 		this.layout = new MapLayout(this);
-		// this.eventBus = new eventBus(this);
+
+		this.root = Topic.fromJSON(data);
+
+		this.render();
+		this.init();
+	}
+
+	private init() {
+		// init events
+		// init selections
 	}
 
 	update() {
@@ -50,14 +62,11 @@ class MindMap extends MindMapI {
 	}
 
 	mount(port: HTMLElement) {
-		const rendered = this.render();
-		// TODO: attach event
-
 		// mount
-		port.appendChild(rendered);
+		port.appendChild(this.dom);
 
 		// TODO: emit mount event
-		// return;
+
 		// layout map
 		this.layout.update(this.root);
 

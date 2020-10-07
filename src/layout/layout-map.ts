@@ -15,11 +15,8 @@ class MapLayout extends Layout {
 			root.children.length
 		);
 
-		let LWidth = 0,
-			LHeight = 0,
-			RWidth = 0,
+		let RWidth = 0,
 			RHeight = 0,
-			LBBoxes = [],
 			RBBoxes = [];
 
 		for (let i = 0; i < rightChildren.length; i++) {
@@ -30,6 +27,10 @@ class MapLayout extends Layout {
 			RBBoxes.push(bbox);
 		}
 
+		let LHeight = 0,
+			LWidth = 0,
+			LBBoxes = [];
+
 		for (let i = 0; i < leftChildren.length; i++) {
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
 			let bbox = this.layoutTopic(leftChildren[i], 'left');
@@ -39,10 +40,12 @@ class MapLayout extends Layout {
 		}
 
 		const topicBox = root.getBox();
-		// debugger;
+
+		const RhorizontalGap = RWidth ? this.horizontalGap : 0;
+		const LhorizontalGap = LWidth ? this.horizontalGap : 0;
 		// calculate bbox
 		const bboxWidth =
-			topicBox[0] + LWidth + RWidth + this.horizontalGap * 2;
+			topicBox[0] + LWidth + RWidth + RhorizontalGap + LhorizontalGap;
 		const bboxHeight = Math.max(topicBox[1], RHeight, LHeight);
 
 		// update bbox cache
@@ -58,7 +61,7 @@ class MapLayout extends Layout {
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
 			const child = rightChildren[i];
 			child.dom.style.left =
-				LWidth + this.horizontalGap * 2 + topicBox[0] + 'px';
+				LWidth + RhorizontalGap + LhorizontalGap + topicBox[0] + 'px';
 			child.dom.style.top = verticalGap + offsetTop + 'px';
 			offsetTop += verticalGap + RBBoxes[i][1];
 		}
@@ -69,7 +72,7 @@ class MapLayout extends Layout {
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
 			const child = leftChildren[i];
 			child.dom.style.right =
-				RWidth + this.horizontalGap * 2 + topicBox[0] + 'px';
+				RWidth + RhorizontalGap + LhorizontalGap + topicBox[0] + 'px';
 			+'px';
 			child.dom.style.top = verticalGap + offsetTop + 'px';
 			offsetTop += verticalGap + LBBoxes[i][1];
