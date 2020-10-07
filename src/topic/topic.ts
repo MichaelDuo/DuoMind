@@ -116,6 +116,7 @@ class Topic {
 			this.dom.remove();
 			if (emit) {
 				this.mindmap.eventBus.emit('update');
+				this.mindmap.eventBus.emit('destroyed:topic', this);
 			}
 		}
 	}
@@ -154,6 +155,7 @@ class Topic {
 		this.children.push(newChild);
 		this.childrenContainer.appendChild(newChild.initDom());
 		this.mindmap.eventBus.emit('update');
+		this.mindmap.eventBus.emit('new:topic', newChild);
 	}
 
 	public addSibling() {
@@ -172,6 +174,7 @@ class Topic {
 			);
 			this.parent.childrenContainer.appendChild(newSibling.initDom());
 			this.mindmap.eventBus.emit('update');
+			this.mindmap.eventBus.emit('new:topic', newSibling);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 import Mindmap from 'mindmap';
+import Topic from 'topic';
 export default class Selections {
 	mindmap: Mindmap;
 	selection: string[];
@@ -25,6 +26,10 @@ export default class Selections {
 			} else {
 				this.clearSelection();
 			}
+		});
+
+		this.mindmap.eventBus.on('new:topic', (topic: Topic) => {
+			this.makeSelection([topic.id]);
 		});
 	}
 
