@@ -53,7 +53,8 @@ class MapLayout extends Layout {
 		this.bBoxes[root.id] = [bboxWidth, bboxHeight];
 
 		// position topicEl
-		root.topicEl.style.left = LWidth + this.horizontalGap + 'px';
+		root.topicEl.style.left =
+			LWidth + (LWidth ? this.horizontalGap : 0) + 'px';
 		root.topicEl.style.top = bboxHeight / 2 - topicBox[1] / 2 + 'px';
 
 		// position right children
