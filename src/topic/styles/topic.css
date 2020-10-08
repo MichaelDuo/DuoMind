@@ -11,6 +11,7 @@
 	max-width: 200px;
 	cursor: pointer;
 	z-index: 9;
+	user-select: none;
 }
 
 .topic:hover {

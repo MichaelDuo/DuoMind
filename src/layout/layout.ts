@@ -53,7 +53,6 @@ class Layout {
 
 	// @return: bounding box of layouted topic
 	layoutTopic(topic: Topic, direction: 'left' | 'right') {
-		// console.log(topic.title, direction);
 		// Reset styles
 		for (const property of ['left', 'right']) {
 			topic.dom.style.removeProperty(property);

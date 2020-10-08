@@ -24,6 +24,12 @@ class Commands {
 			event.stopPropagation();
 			this.addSibling();
 		});
+
+		this.mindmap.eventBus.on('dblclick:topic', ({event, topicId}) => {
+			event.preventDefault();
+			event.stopPropagation();
+			this.edit(topicId);
+		});
 	}
 
 	addChild() {
@@ -51,6 +57,14 @@ class Commands {
 				type: 'addSibling',
 			});
 		}
+	}
+
+	edit(topicId: string) {
+		this.mindmap.selection.makeSelection([topicId]);
+		this.mindmap.eventBus.dispatch({
+			topicId,
+			type: 'edit',
+		});
 	}
 }
 

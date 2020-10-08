@@ -1,5 +1,6 @@
 import MindMap from 'mindmap';
 import Topic from 'topic';
+import {findTopicId} from 'utils';
 class EventBus {
 	mindmap: MindMap;
 	topics: {[key: string]: Topic} = {};
@@ -47,17 +48,9 @@ class EventBus {
 
 	initEvents() {
 		this.mindmap.dom.addEventListener('click', (event) => {
-			let clickOnTopic = false;
-			let target = event.target as HTMLElement | null;
-			while (target && target != this.mindmap.dom) {
-				if (target.classList.contains('topic')) {
-					clickOnTopic = true;
-					break;
-				}
-				target = target.parentNode as HTMLElement;
-			}
-			if (clickOnTopic) {
-				this.emit('click:topic', {event, topicId: target!.id});
+			const topicId = findTopicId(event.target as HTMLElement);
+			if (topicId) {
+				this.emit('click:topic', {event, topicId});
 			} else {
 				this.emit('click:mindmap', {event});
 			}
@@ -65,6 +58,15 @@ class EventBus {
 
 		document.addEventListener('keydown', (event) => {
 			this.emit(`keydown:${event.key}`, {event});
+		});
+
+		this.mindmap.dom.addEventListener('dblclick', (event) => {
+			const topicId = findTopicId(event.target as HTMLElement);
+			if (topicId) {
+				this.emit('dblclick:topic', {event, topicId});
+			} else {
+				this.emit('dblclick:mindmap', {event});
+			}
 		});
 	}
 }

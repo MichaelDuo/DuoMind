@@ -128,6 +128,7 @@ class Topic {
 				break;
 			case 'deselect':
 				this.topicEl.classList.remove('selected');
+				this.exitEditMode();
 				break;
 			case 'addChild':
 				this.addChild();
@@ -137,6 +138,9 @@ class Topic {
 				break;
 			case 'delete':
 				this.destroy();
+				break;
+			case 'edit':
+				this.enterEditMode();
 				break;
 			default:
 				console.log('Unhandled action: ', action);
@@ -176,6 +180,18 @@ class Topic {
 			this.mindmap.eventBus.emit('update');
 			this.mindmap.eventBus.emit('new:topic', newSibling);
 		}
+	}
+
+	public enterEditMode() {
+		console.log('enter edit mode');
+		this.text.setAttribute('contenteditable', 'true');
+		this.topicEl.style.zIndex = '999';
+	}
+
+	public exitEditMode() {
+		console.log('exit edit mode');
+		this.text.removeAttribute('contenteditable');
+		this.topicEl.style.removeProperty('z-index');
 	}
 }
 
