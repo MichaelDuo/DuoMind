@@ -2,11 +2,11 @@ import Mindmap from 'mindmap';
 import Topic from 'topic';
 export default class Selections {
 	mindmap: Mindmap;
-	selection: string[];
+	selection: Set<string>;
 
 	constructor(mindmap: Mindmap) {
 		this.mindmap = mindmap;
-		this.selection = [];
+		this.selection = new Set();
 		this.initEvents();
 	}
 
@@ -15,7 +15,7 @@ export default class Selections {
 			this.makeSelection([topicId]);
 		});
 
-		this.mindmap.eventBus.on('click:mindmap', ({topicId}) => {
+		this.mindmap.eventBus.on('click:mindmap', ({}) => {
 			this.clearSelection();
 		});
 
@@ -28,14 +28,29 @@ export default class Selections {
 		for (let topicId of this.selection) {
 			this.mindmap.eventBus.dispatch({topicId, type: 'deselect'});
 		}
-		this.selection = [];
+		this.selection = new Set();
+	}
+
+	clearSelectionExcept(topicIds: Set<string>) {
+		const selection = new Set(this.selection);
+		for (let topicId of selection) {
+			if (!topicIds.has(topicId)) {
+				this.mindmap.eventBus.dispatch({topicId, type: 'deselect'});
+				selection.delete(topicId);
+			}
+		}
+		this.selection = selection;
 	}
 
 	makeSelection(topicIds: string[]) {
-		this.clearSelection();
-		this.selection = topicIds;
-		for (let topicId of this.selection) {
-			this.mindmap.eventBus.dispatch({topicId, type: 'select'});
+		this.clearSelectionExcept(new Set(topicIds));
+		const selection = new Set(this.selection);
+		for (let topicId of new Set(topicIds)) {
+			if (!selection.has(topicId)) {
+				this.mindmap.eventBus.dispatch({topicId, type: 'select'});
+				selection.add(topicId);
+			}
 		}
+		this.selection = selection;
 	}
 }
