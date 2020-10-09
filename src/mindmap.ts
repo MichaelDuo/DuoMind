@@ -5,7 +5,6 @@ import Selection from 'selection';
 import EventBus from 'eventbus';
 import CommandService from 'commands/command_service';
 import makeMindmapCommands from 'commands/mindmap_commands';
-import {findTopicId} from 'utils';
 
 interface Config {
 	data: any;

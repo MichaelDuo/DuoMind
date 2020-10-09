@@ -19,6 +19,9 @@ class Topic {
 	text!: HTMLElement;
 	canvas!: HTMLCanvasElement;
 	childrenContainer!: HTMLElement;
+	editingWrapper!: HTMLElement;
+
+	DOMEventHandlers: {[key: string]: (e: Event) => any};
 
 	editing = false;
 
@@ -32,6 +35,7 @@ class Topic {
 		this.parent = context.parent;
 		this.mindmap = context.mindmap;
 		this.mindmap.eventBus.register(this);
+		this.DOMEventHandlers = this.getDOMEventHandlers();
 	}
 
 	static fromJSON(
@@ -83,6 +87,7 @@ class Topic {
 		this.text = document.createElement('div');
 		this.canvas = document.createElement('canvas');
 		this.childrenContainer = document.createElement('div');
+		this.editingWrapper = document.createElement('div');
 
 		this.dom.classList.add('topic-container');
 		this.topicEl.classList.add('topic');
@@ -100,6 +105,7 @@ class Topic {
 		this.dom.appendChild(this.canvas);
 		this.dom.appendChild(this.childrenContainer);
 		this.topicEl.appendChild(this.text);
+		this.dom.appendChild(this.editingWrapper);
 
 		for (let child of this.children) {
 			this.childrenContainer.appendChild(child.initDom());
@@ -189,10 +195,14 @@ class Topic {
 		this.editing = true;
 		this.text.setAttribute('contenteditable', 'true');
 		this.topicEl.style.zIndex = '999';
-		// this.mindmap.eventBus.on('keydown:Enter', () => {
-		// 	console.log('save');
-		// 	this.exitEditMode();
-		// });
+		this.editingWrapper.appendChild(this.topicEl);
+
+		this.editingWrapper.style.left = this.topicEl.style.left;
+		this.editingWrapper.style.right = this.topicEl.style.right;
+		this.editingWrapper.style.position = 'absolute';
+		this.editingWrapper.style.width = '500px';
+
+		this.attachEvents();
 	}
 
 	public exitEditMode() {
@@ -200,7 +210,45 @@ class Topic {
 		this.editing = false;
 		this.text.removeAttribute('contenteditable');
 		this.topicEl.style.removeProperty('z-index');
+		this.dom.appendChild(this.topicEl);
+
 		this.mindmap.eventBus.emit('update');
+
+		for (let property of ['left', 'right', 'position', 'width']) {
+			this.editingWrapper.style.removeProperty(property);
+		}
+
+		this.detachEvents();
+	}
+
+	private getDOMEventHandlers() {
+		return {
+			['keydown']: (e: Event) => {
+				e.stopPropagation();
+				if ((e as KeyboardEvent).key === 'Enter') {
+					e.preventDefault();
+					this.exitEditMode();
+				}
+			},
+		};
+	}
+
+	private attachEvents() {
+		for (let eventName in this.DOMEventHandlers) {
+			this.dom.addEventListener(
+				eventName,
+				this.DOMEventHandlers[eventName]
+			);
+		}
+	}
+
+	private detachEvents() {
+		for (let eventName in this.DOMEventHandlers) {
+			this.dom.removeEventListener(
+				eventName,
+				this.DOMEventHandlers[eventName]
+			);
+		}
 	}
 }
 
