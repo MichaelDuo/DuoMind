@@ -47,12 +47,12 @@ class EventBus {
 	}
 
 	initEvents() {
-		this.mindmap.dom.addEventListener('click', (event) => {
+		this.mindmap.dom.addEventListener('mousedown', (event) => {
 			const topicId = findTopicId(event.target as HTMLElement);
 			if (topicId) {
-				this.emit('click:topic', {event, topicId});
+				this.emit('mousedown:topic', {event, topicId});
 			} else {
-				this.emit('click:mindmap', {event});
+				this.emit('mousedown:mindmap', {event});
 			}
 		});
 

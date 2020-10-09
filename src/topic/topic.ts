@@ -210,6 +210,7 @@ class Topic {
 	public exitEditMode() {
 		if (!this.editing) return;
 		this.editing = false;
+		this.title = this.text.textContent || '';
 		this.text.removeAttribute('contenteditable');
 		this.topicEl.style.removeProperty('z-index');
 		this.topicEl.classList.remove('editing');

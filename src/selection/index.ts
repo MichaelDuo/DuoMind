@@ -11,11 +11,11 @@ export default class Selections {
 	}
 
 	initEvents() {
-		this.mindmap.eventBus.on('click:topic', ({topicId}) => {
+		this.mindmap.eventBus.on('mousedown:topic', ({topicId}) => {
 			this.makeSelection([topicId]);
 		});
 
-		this.mindmap.eventBus.on('click:mindmap', ({}) => {
+		this.mindmap.eventBus.on('mousedown:mindmap', ({}) => {
 			this.clearSelection();
 		});
 
