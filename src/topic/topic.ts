@@ -20,6 +20,8 @@ class Topic {
 	canvas!: HTMLCanvasElement;
 	childrenContainer!: HTMLElement;
 
+	editing = false;
+
 	constructor(
 		topicData: TopicData,
 		context: {mindmap: MindMap; parent: Topic | null}
@@ -183,15 +185,22 @@ class Topic {
 	}
 
 	public enterEditMode() {
-		console.log('enter edit mode');
+		if (this.editing) return;
+		this.editing = true;
 		this.text.setAttribute('contenteditable', 'true');
 		this.topicEl.style.zIndex = '999';
+		// this.mindmap.eventBus.on('keydown:Enter', () => {
+		// 	console.log('save');
+		// 	this.exitEditMode();
+		// });
 	}
 
 	public exitEditMode() {
-		console.log('exit edit mode');
+		if (!this.editing) return;
+		this.editing = false;
 		this.text.removeAttribute('contenteditable');
 		this.topicEl.style.removeProperty('z-index');
+		this.mindmap.eventBus.emit('update');
 	}
 }
 

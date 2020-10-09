@@ -3,7 +3,9 @@ import Layout from 'layout/layout';
 import MapLayout from 'layout/layout-map';
 import Selection from 'selection';
 import EventBus from 'eventbus';
-import Commands from 'commands';
+import CommandService from 'commands/command_service';
+import makeMindmapCommands from 'commands/mindmap_commands';
+import {findTopicId} from 'utils';
 
 interface Config {
 	data: any;
@@ -13,11 +15,13 @@ class MindMap {
 	root: Topic;
 	eventBus: EventBus;
 	selection: Selection;
-	commands: Commands;
 
 	dom!: HTMLElement;
 	board!: HTMLElement;
 	connections!: HTMLElement;
+
+	private commandService: CommandService;
+	private mindmapCommands: CommandService;
 
 	constructor(config: Config) {
 		const {data} = config;
@@ -26,9 +30,13 @@ class MindMap {
 		this.root = Topic.fromJSON(data, {mindmap: this, parent: null});
 		this.initDom();
 		this.selection = new Selection(this);
-		this.commands = new Commands(this);
+
+		this.commandService = new CommandService();
+		this.mindmapCommands = makeMindmapCommands(this);
+		this.commandService.setDelegate(this.mindmapCommands);
 
 		this.eventBus.initEvents();
+		this.initEvents();
 	}
 
 	update() {
@@ -64,6 +72,43 @@ class MindMap {
 
 		// position map
 		this.layout.centerMap();
+	}
+
+	initEvents() {
+		this.eventBus.on('keydown:Tab', ({event}: {event: Event}) => {
+			event.preventDefault();
+			event.stopPropagation();
+			this.commandService.exec('addChild');
+		});
+
+		this.eventBus.on('keydown:Backspace', ({event}: {event: Event}) => {
+			event.preventDefault();
+			event.stopPropagation();
+			this.commandService.exec('deleteSelection');
+		});
+
+		this.eventBus.on('keydown:Enter', ({event}: {event: Event}) => {
+			event.preventDefault();
+			event.stopPropagation();
+			this.commandService.exec('addSibling');
+		});
+
+		this.eventBus.on(
+			'dblclick:topic',
+			({event, topicId}: {event: Event; topicId: string}) => {
+				event.preventDefault();
+				event.stopPropagation();
+				this.commandService.exec('editTopic', {topicId: topicId});
+			}
+		);
+	}
+
+	setCommandDelegate(delegate: CommandService | null) {
+		this.commandService.setDelegate(delegate);
+	}
+
+	restoreCommandDelegate() {
+		this.commandService.setDelegate(this.mindmapCommands);
 	}
 }
 
