@@ -6,24 +6,34 @@
 	position: absolute;
 	color: #8f8d7d;
 	border: 3px solid #8f8d7d;
+	border-radius: 5px;
 	background-color: #1d1a17;
 	padding: 5px 10px;
 	max-width: 200px;
-	cursor: pointer;
 	z-index: 9;
 	user-select: none;
+	word-break: break-word;
 }
 
 .topic:hover {
-	border-color: yellow;
+	border-color: #e8e390;
+	cursor: pointer;
 }
 
 .topic.selected {
-	border-color: yellow;
+	border-color: #d2cb07;
+}
+
+.topic.editing {
+	cursor: text;
 }
 
 .topic-children-container {
 	position: absolute;
+}
+
+.topic-text {
+	outline: none;
 }
 
 .branch-connections {

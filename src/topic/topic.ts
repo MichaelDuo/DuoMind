@@ -69,6 +69,7 @@ class Topic {
 	}
 
 	public getBox() {
+		// TODO: put in layout mode, then exit layout mode
 		const rect = this.topicEl.getBoundingClientRect();
 		return [rect.width, rect.height];
 	}
@@ -94,14 +95,14 @@ class Topic {
 		this.topicEl.id = this.id;
 		this.canvas.classList.add('branch-connections');
 		this.childrenContainer.classList.add('topic-children-container');
+		this.text.classList.add('topic-text');
 
 		this.text.innerText = this.title;
 
 		// make sure child have enough space to grow, the max-width is 200px
-		this.dom.style.width = '500px';
-		this.dom.style.height = '500px';
+		this.dom.style.width = '200px';
 
-		this.dom.appendChild(this.topicEl);
+		this.editingWrapper.appendChild(this.topicEl);
 		this.dom.appendChild(this.canvas);
 		this.dom.appendChild(this.childrenContainer);
 		this.topicEl.appendChild(this.text);
@@ -194,15 +195,16 @@ class Topic {
 		if (this.editing) return;
 		this.editing = true;
 		this.text.setAttribute('contenteditable', 'true');
+		this.text.focus();
 		this.topicEl.style.zIndex = '999';
-		this.editingWrapper.appendChild(this.topicEl);
+		this.topicEl.classList.add('editing');
 
-		this.editingWrapper.style.left = this.topicEl.style.left;
-		this.editingWrapper.style.right = this.topicEl.style.right;
-		this.editingWrapper.style.position = 'absolute';
-		this.editingWrapper.style.width = '500px';
+		// move cursor to last
+		document.execCommand('selectAll', false);
+		document.getSelection()?.collapseToEnd();
 
 		this.attachEvents();
+		this.enterFreeFlowMode();
 	}
 
 	public exitEditMode() {
@@ -210,15 +212,39 @@ class Topic {
 		this.editing = false;
 		this.text.removeAttribute('contenteditable');
 		this.topicEl.style.removeProperty('z-index');
-		this.dom.appendChild(this.topicEl);
+		this.topicEl.classList.remove('editing');
 
 		this.mindmap.eventBus.emit('update');
 
-		for (let property of ['left', 'right', 'position', 'width']) {
+		this.exitFreeFlowMode();
+		this.detachEvents();
+	}
+
+	private enterFreeFlowMode() {
+		this.editingWrapper.style.position = 'absolute';
+		this.editingWrapper.style.width = '200px';
+		for (let p of ['top', 'right', 'bottom', 'left']) {
+			if (this.topicEl.style[p as any]) {
+				this.editingWrapper.style[p as any] = '0px';
+			}
+		}
+		this.editingWrapper.style.width =
+			parseInt(this.dom.style.width) > 200
+				? this.dom.style.width
+				: '200px';
+	}
+
+	private exitFreeFlowMode() {
+		for (let property of [
+			'top',
+			'right',
+			'bottom',
+			'left',
+			'position',
+			'width',
+		]) {
 			this.editingWrapper.style.removeProperty(property);
 		}
-
-		this.detachEvents();
 	}
 
 	private getDOMEventHandlers() {
