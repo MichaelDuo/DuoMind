@@ -1394,6 +1394,7 @@ class MapLayout extends layout_1.default {
         console.log('update');
         this.layoutRoot(root);
         this.drawConnections(root);
+        this.centerMap();
     }
     layoutRoot(root) {
         const LRSplitIndex = Math.floor(root.children.length / 2);
@@ -1471,6 +1472,7 @@ exports.default = MapLayout;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const utils_1 = __webpack_require__(/*! utils */ "./src/utils/index.ts");
 class Layout {
     constructor(mindmap) {
         this.horizontalGap = 25; // Topic Horizontal Gap
@@ -1573,15 +1575,15 @@ class Layout {
             return;
         }
         ctx.strokeStyle = 'rgba(143, 141, 125, 1)';
-        const canvasRect = this.getOffset(topic.canvas, this.mindmap.dom);
-        const topicRect = this.getOffset(topic.topicEl, this.mindmap.dom);
+        const canvasRect = utils_1.getOffset(topic.canvas, this.mindmap.dom);
+        const topicRect = utils_1.getOffset(topic.topicEl, this.mindmap.dom);
         const topicPos = [
             topicRect.left - canvasRect.left + topic.topicEl.offsetWidth / 2,
             topicRect.top - canvasRect.top + topic.topicEl.offsetHeight / 2,
         ];
         for (let child of topic.children) {
             this.drawConnections(child);
-            const childRect = this.getOffset(child.topicEl, this.mindmap.dom);
+            const childRect = utils_1.getOffset(child.topicEl, this.mindmap.dom);
             const childPos = [
                 childRect.left - canvasRect.left,
                 childRect.top - canvasRect.top + child.topicEl.offsetHeight / 2,
@@ -1599,19 +1601,6 @@ class Layout {
             }
             ctx.stroke();
         }
-    }
-    // get offset relative to document
-    getOffset(el, ref) {
-        let offsetTop = 0;
-        let offsetLeft = 0;
-        while (el != ref) {
-            if (!isNaN(el.offsetLeft)) {
-                offsetLeft += el.offsetLeft;
-                offsetTop += el.offsetTop;
-            }
-            el = el.offsetParent;
-        }
-        return { top: offsetTop, left: offsetLeft };
     }
 }
 exports.default = Layout;
@@ -2092,6 +2081,19 @@ function findTopicId(el) {
     return null;
 }
 exports.findTopicId = findTopicId;
+function getOffset(el, ref) {
+    let offsetTop = 0;
+    let offsetLeft = 0;
+    while (el != ref) {
+        if (!isNaN(el.offsetLeft)) {
+            offsetLeft += el.offsetLeft;
+            offsetTop += el.offsetTop;
+        }
+        el = el.offsetParent;
+    }
+    return { top: offsetTop, left: offsetLeft };
+}
+exports.getOffset = getOffset;
 
 
 /***/ })
