@@ -6,6 +6,7 @@ class MapLayout extends Layout {
 		console.log('update');
 		this.layoutRoot(root);
 		this.drawConnections(root);
+		this.centerMap();
 	}
 
 	layoutRoot(root: Topic) {
