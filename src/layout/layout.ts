@@ -1,6 +1,6 @@
 import Topic from 'topic';
 import MindMap from 'mindmap';
-import {debounce} from 'lodash';
+import {getOffset} from 'utils';
 
 /**
       Topic Container, canvas
@@ -150,8 +150,8 @@ class Layout {
 		}
 		ctx.strokeStyle = 'rgba(143, 141, 125, 1)';
 
-		const canvasRect = this.getOffset(topic.canvas, this.mindmap.dom);
-		const topicRect = this.getOffset(topic.topicEl, this.mindmap.dom);
+		const canvasRect = getOffset(topic.canvas, this.mindmap.dom);
+		const topicRect = getOffset(topic.topicEl, this.mindmap.dom);
 
 		const topicPos = [
 			topicRect.left - canvasRect.left + topic.topicEl.offsetWidth / 2,
@@ -160,7 +160,7 @@ class Layout {
 
 		for (let child of topic.children) {
 			this.drawConnections(child);
-			const childRect = this.getOffset(child.topicEl, this.mindmap.dom);
+			const childRect = getOffset(child.topicEl, this.mindmap.dom);
 
 			const childPos = [
 				childRect.left - canvasRect.left,
@@ -183,20 +183,6 @@ class Layout {
 			}
 			ctx.stroke();
 		}
-	}
-
-	// get offset relative to document
-	getOffset(el: HTMLElement, ref?: HTMLElement) {
-		let offsetTop = 0;
-		let offsetLeft = 0;
-		while (el != ref) {
-			if (!isNaN(el.offsetLeft)) {
-				offsetLeft += el.offsetLeft;
-				offsetTop += el.offsetTop;
-			}
-			el = el.offsetParent as HTMLElement;
-		}
-		return {top: offsetTop, left: offsetLeft};
 	}
 }
 

@@ -8,3 +8,16 @@ export function findTopicId(el: HTMLElement | null) {
 	}
 	return null;
 }
+
+export function getOffset(el: HTMLElement, ref?: HTMLElement) {
+	let offsetTop = 0;
+	let offsetLeft = 0;
+	while (el != ref) {
+		if (!isNaN(el.offsetLeft)) {
+			offsetLeft += el.offsetLeft;
+			offsetTop += el.offsetTop;
+		}
+		el = el.offsetParent as HTMLElement;
+	}
+	return {top: offsetTop, left: offsetLeft};
+}
