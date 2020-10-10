@@ -1,21 +1,5 @@
-body {
-	margin: 0;
-}
-
-.app * {
+.mindmap * {
 	box-sizing: border-box;
-}
-
-.app-name {
-	position: absolute;
-	z-index: 1000;
-	bottom: 10px;
-	right: 10px;
-	text-align: right;
-}
-
-.app-name * {
-	color: white;
 }
 
 .mindmap {

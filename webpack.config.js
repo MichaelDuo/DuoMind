@@ -1,8 +1,16 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const path = require('path');
 
 module.exports = {
-	mode: 'production',
+	mode: 'development',
+	entry: {
+		mindmap: './src/index.ts',
+	},
+	output: {
+		filename: '[name].js',
+		path: path.resolve(__dirname, 'dist'),
+	},
 	devtool: 'source-map',
 	resolve: {
 		modules: ['node_modules', path.resolve('./src')],
@@ -32,8 +40,9 @@ module.exports = {
 		],
 	},
 	plugins: [
+		new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
-			template: 'src/assets/index.html',
+			template: 'demo/index.html',
 		}),
 	],
 	devServer: {
