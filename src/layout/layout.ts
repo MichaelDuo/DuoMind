@@ -122,14 +122,22 @@ class Layout {
 
 	centerMap() {
 		const port = this.mindmap.board;
-		this.mindmap.root.dom.style.left =
-			port.offsetWidth / 2 -
-			this.bBoxes[this.mindmap.root.id][0] / 2 +
-			'px';
-		this.mindmap.root.dom.style.top =
-			port.offsetHeight / 2 -
-			this.bBoxes[this.mindmap.root.id][1] / 2 +
-			'px';
+		const portBox = port.getBoundingClientRect()
+		if(parseInt(this.mindmap.root.dom.style.height)<portBox.height){
+			this.mindmap.root.dom.style.top = port.offsetHeight / 2 -
+				this.bBoxes[this.mindmap.root.id][1] / 2 +
+				'px';
+		} else {
+			this.mindmap.root.dom.style.top = '0px';
+		}
+
+		if(parseInt(this.mindmap.root.dom.style.width)<portBox.width){
+			this.mindmap.root.dom.style.left = port.offsetWidth / 2 -
+				this.bBoxes[this.mindmap.root.id][0] / 2 +
+				'px';
+		} else {
+			this.mindmap.root.dom.style.left = '0px';
+		}
 	}
 
 	anchorCanvas(topic: Topic) {
