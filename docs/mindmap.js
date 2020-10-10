@@ -1573,15 +1573,15 @@ class Layout {
             return;
         }
         ctx.strokeStyle = 'rgba(143, 141, 125, 1)';
-        const canvasRect = topic.canvas.getBoundingClientRect();
-        const topicRect = topic.topicEl.getBoundingClientRect();
+        const canvasRect = this.getOffset(topic.canvas, this.mindmap.dom);
+        const topicRect = this.getOffset(topic.topicEl, this.mindmap.dom);
         const topicPos = [
             topicRect.left - canvasRect.left + topic.topicEl.offsetWidth / 2,
             topicRect.top - canvasRect.top + topic.topicEl.offsetHeight / 2,
         ];
         for (let child of topic.children) {
             this.drawConnections(child);
-            const childRect = child.topicEl.getBoundingClientRect();
+            const childRect = this.getOffset(child.topicEl, this.mindmap.dom);
             const childPos = [
                 childRect.left - canvasRect.left,
                 childRect.top - canvasRect.top + child.topicEl.offsetHeight / 2,
@@ -1599,6 +1599,19 @@ class Layout {
             }
             ctx.stroke();
         }
+    }
+    // get offset relative to document
+    getOffset(el, ref) {
+        let offsetTop = 0;
+        let offsetLeft = 0;
+        while (el != ref) {
+            if (!isNaN(el.offsetLeft)) {
+                offsetLeft += el.offsetLeft;
+                offsetTop += el.offsetTop;
+            }
+            el = el.offsetParent;
+        }
+        return { top: offsetTop, left: offsetLeft };
     }
 }
 exports.default = Layout;
