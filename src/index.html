@@ -146,35 +146,43 @@
 					},
 					{
 						title: '0.2',
+						children: [
+							{
+								title: 'New Topic',
+								children: [
+									{
+										title: 'New Topic',
+										children: [
+											{title: 'New Topic'},
+											{title: 'New Topic'},
+											{
+												title: 'New Topic',
+												children: [
+													{title: 'New Topic'},
+													{title: 'New Topic'},
+													{title: 'New Topic'},
+													{title: 'New Topic'},
+													{title: 'New Topic'},
+													{title: 'New Topic'},
+													{title: 'New Topic'},
+												],
+											},
+											{title: 'New Topic'},
+										],
+									},
+								],
+							},
+						],
 					},
-					// {
-					// 	title: '0.2',
-					// 	children: [
-					// 		{
-					// 			title: '0.1.1f fjdlasjfidhsa fdhasiofhdiosajf fdjsaiojfido',
-					// 		},
-					// 		{
-					// 			title: '0.1.2',
-					// 		},
-					// 	],
-					// },
-					// {
-					// 	title: '0.2',
-					// 	children: [],
-					// },
-					// {
-					// 	title: '0.1',
-					// },
-					// {title: '0.2'},
-					// {title: '0.333343243'},
-					// {title: '0.4'},
-					// {title: '0.5'},
-					// {title: '0.6'},
 				],
+			};
+
+			var data3 = {
+				title: 'Test',
 			};
 			window.onload = function () {
 				var el = document.getElementById('app');
-				var mindmap = new MindMap({data: data2}).mount(el);
+				var mindmap = new MindMap({data: data}).mount(el);
 			};
 		</script>
 	</body>
