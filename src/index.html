@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Duo MindMap</title>
+		<title>DuoMind</title>
 	</head>
 	<style>
 		body {
@@ -26,7 +26,7 @@
 		<div class="app-name">
 			<div>
 				<a href="https://github.com/MichaelDuo/mindmap" target="_blank"
-					>MichaelDuo/mindmap</a
+					>MichaelDuo/DuoMind</a
 				>
 			</div>
 		</div>
@@ -173,10 +173,8 @@
 				],
 			};
 			window.onload = function () {
-				console.log('Loaded');
 				var el = document.getElementById('app');
-				var mindmap = new MindMap({data});
-				mindmap.mount(el);
+				var mindmap = new MindMap({data: data2}).mount(el);
 			};
 		</script>
 	</body>

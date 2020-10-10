@@ -1,10 +1,10 @@
-# mindmap
+# DuoMind
 
-This project is still under development
+MindMapping software
 
 ## Demo
 
-Try: [https://michaelduo.github.io/mindmap/](https://michaelduo.github.io/mindmap/)
+Try: [https://michaelduo.github.io/DuoMind/](https://michaelduo.github.io/DuoMind/)
 
 ![](https://github.com/MichaelDuo/mindmap/blob/master/demo.png)
 
@@ -19,11 +19,12 @@ Try: [https://michaelduo.github.io/mindmap/](https://michaelduo.github.io/mindma
 -   [x] Editable topic
 -   [x] Command module
 -   [ ] Drag and drop module
+-   [ ] Undo redo module
 
 ## Usage
 
 ```javascript
-App.fromJSON(mindmapData);
+new MindMap({data}).mount(el);
 ```
 
 ## mindmap data example
