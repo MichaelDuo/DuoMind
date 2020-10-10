@@ -4,7 +4,9 @@ This project is still under development
 
 ## Demo
 
-![Alt Text](https://github.com/MichaelDuo/mindmap/blob/master/demo.png)
+Try: [https://michaelduo.github.io/mindmap/](https://michaelduo.github.io/mindmap/)
+
+![](https://github.com/MichaelDuo/mindmap/blob/master/demo.png)
 
 ## Roadmap
 
