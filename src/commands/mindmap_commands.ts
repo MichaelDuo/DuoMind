@@ -4,7 +4,7 @@ import MindMap from 'mindmap';
 function mindmapCommands(mindmap: MindMap) {
 	return new CommandService({
 		['addChild']() {
-			for (let topicId of mindmap.selection.selection) {
+			for (const topicId of mindmap.selection.selection) {
 				mindmap.eventBus.dispatch({
 					topicId,
 					type: 'addChild',
@@ -12,7 +12,7 @@ function mindmapCommands(mindmap: MindMap) {
 			}
 		},
 		['deleteSelection']() {
-			for (let topicId of mindmap.selection.selection) {
+			for (const topicId of mindmap.selection.selection) {
 				mindmap.eventBus.dispatch({
 					topicId,
 					type: 'delete',
@@ -20,7 +20,7 @@ function mindmapCommands(mindmap: MindMap) {
 			}
 		},
 		['addSibling']() {
-			for (let topicId of mindmap.selection.selection) {
+			for (const topicId of mindmap.selection.selection) {
 				mindmap.eventBus.dispatch({
 					topicId,
 					type: 'addSibling',

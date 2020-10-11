@@ -18,8 +18,8 @@ class MapLayout extends Layout {
 		);
 
 		let RWidth = 0,
-			RHeight = 0,
-			RBBoxes = [];
+			RHeight = 0;
+		const RBBoxes = [];
 
 		for (let i = 0; i < rightChildren.length; i++) {
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
@@ -30,12 +30,12 @@ class MapLayout extends Layout {
 		}
 
 		let LHeight = 0,
-			LWidth = 0,
-			LBBoxes = [];
+			LWidth = 0;
+		const LBBoxes = [];
 
 		for (let i = 0; i < leftChildren.length; i++) {
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
-			let bbox = this.layoutTopic(leftChildren[i], 'left');
+			const bbox = this.layoutTopic(leftChildren[i], 'left');
 			LWidth = Math.max(LWidth, bbox[0]);
 			LHeight += verticalGap + bbox[1]; // need to add vertical
 			LBBoxes.push(bbox);

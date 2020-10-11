@@ -25,7 +25,7 @@ export default class Selections {
 	}
 
 	clearSelection() {
-		for (let topicId of this.selection) {
+		for (const topicId of this.selection) {
 			this.mindmap.eventBus.dispatch({topicId, type: 'deselect'});
 		}
 		this.selection = new Set();
@@ -33,7 +33,7 @@ export default class Selections {
 
 	clearSelectionExcept(topicIds: Set<string>) {
 		const selection = new Set(this.selection);
-		for (let topicId of selection) {
+		for (const topicId of selection) {
 			if (!topicIds.has(topicId)) {
 				this.mindmap.eventBus.dispatch({topicId, type: 'deselect'});
 				selection.delete(topicId);
@@ -45,7 +45,7 @@ export default class Selections {
 	makeSelection(topicIds: string[]) {
 		this.clearSelectionExcept(new Set(topicIds));
 		const selection = new Set(this.selection);
-		for (let topicId of new Set(topicIds)) {
+		for (const topicId of new Set(topicIds)) {
 			if (!selection.has(topicId)) {
 				this.mindmap.eventBus.dispatch({topicId, type: 'select'});
 				selection.add(topicId);

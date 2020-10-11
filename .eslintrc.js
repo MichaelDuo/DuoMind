@@ -16,5 +16,6 @@ module.exports = {
 		'@typescript-eslint/no-explicit-any': 0,
 		'@typescript-eslint/indent': 0, // confilict with prettier
 		'@typescript-eslint/camelcase': 0,
+		'@typescript-eslint/explicit-module-boundary-types': 0,
 	},
 };

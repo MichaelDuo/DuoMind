@@ -42,13 +42,13 @@ class Topic {
 		topicJSON: any,
 		context: {mindmap: MindMap; parent: Topic | null}
 	): Topic {
-		let title: string = topicJSON.title;
+		const title: string = topicJSON.title;
 
 		let children: Array<Topic> = [];
 
 		const topic = new Topic({title, children}, context);
 
-		let childrenArr: Array<any> = topicJSON.children;
+		const childrenArr: Array<any> = topicJSON.children;
 		if (childrenArr && childrenArr.length) {
 			children = childrenArr
 				.map((v) =>
@@ -108,7 +108,7 @@ class Topic {
 		this.topicEl.appendChild(this.text);
 		this.dom.appendChild(this.editingWrapper);
 
-		for (let child of this.children) {
+		for (const child of this.children) {
 			this.childrenContainer.appendChild(child.initDom());
 		}
 
@@ -117,7 +117,7 @@ class Topic {
 
 	public destroy(emit = true) {
 		if (this.parent) {
-			for (let child of [...this.children]) {
+			for (const child of [...this.children]) {
 				child.destroy(false);
 			}
 			this.mindmap.eventBus.unregister(this);
@@ -224,7 +224,7 @@ class Topic {
 	private enterFreeFlowMode() {
 		this.editingWrapper.style.position = 'absolute';
 		this.editingWrapper.style.width = '200px';
-		for (let p of ['top', 'right', 'bottom', 'left']) {
+		for (const p of ['top', 'right', 'bottom', 'left']) {
 			if (this.topicEl.style[p as any]) {
 				this.editingWrapper.style[p as any] = '0px';
 			}
@@ -236,7 +236,7 @@ class Topic {
 	}
 
 	private exitFreeFlowMode() {
-		for (let property of [
+		for (const property of [
 			'top',
 			'right',
 			'bottom',
@@ -261,7 +261,7 @@ class Topic {
 	}
 
 	private attachEvents() {
-		for (let eventName in this.DOMEventHandlers) {
+		for (const eventName in this.DOMEventHandlers) {
 			this.dom.addEventListener(
 				eventName,
 				this.DOMEventHandlers[eventName]
@@ -270,7 +270,7 @@ class Topic {
 	}
 
 	private detachEvents() {
-		for (let eventName in this.DOMEventHandlers) {
+		for (const eventName in this.DOMEventHandlers) {
 			this.dom.removeEventListener(
 				eventName,
 				this.DOMEventHandlers[eventName]
