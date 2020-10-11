@@ -1240,7 +1240,7 @@ const command_service_1 = __importDefault(__webpack_require__(/*! ./command_serv
 function mindmapCommands(mindmap) {
     return new command_service_1.default({
         ['addChild']() {
-            for (let topicId of mindmap.selection.selection) {
+            for (const topicId of mindmap.selection.selection) {
                 mindmap.eventBus.dispatch({
                     topicId,
                     type: 'addChild',
@@ -1248,7 +1248,7 @@ function mindmapCommands(mindmap) {
             }
         },
         ['deleteSelection']() {
-            for (let topicId of mindmap.selection.selection) {
+            for (const topicId of mindmap.selection.selection) {
                 mindmap.eventBus.dispatch({
                     topicId,
                     type: 'delete',
@@ -1256,7 +1256,7 @@ function mindmapCommands(mindmap) {
             }
         },
         ['addSibling']() {
-            for (let topicId of mindmap.selection.selection) {
+            for (const topicId of mindmap.selection.selection) {
                 mindmap.eventBus.dispatch({
                     topicId,
                     type: 'addSibling',
@@ -1400,7 +1400,8 @@ class MapLayout extends layout_1.default {
         const LRSplitIndex = Math.floor(root.children.length / 2);
         const rightChildren = root.children.slice(0, LRSplitIndex);
         const leftChildren = root.children.slice(LRSplitIndex, root.children.length);
-        let RWidth = 0, RHeight = 0, RBBoxes = [];
+        let RWidth = 0, RHeight = 0;
+        const RBBoxes = [];
         for (let i = 0; i < rightChildren.length; i++) {
             const verticalGap = i == 0 ? 0 : this.verticalGap;
             const bbox = this.layoutTopic(rightChildren[i], 'right');
@@ -1408,10 +1409,11 @@ class MapLayout extends layout_1.default {
             RHeight += verticalGap + bbox[1]; // need to add vertical
             RBBoxes.push(bbox);
         }
-        let LHeight = 0, LWidth = 0, LBBoxes = [];
+        let LHeight = 0, LWidth = 0;
+        const LBBoxes = [];
         for (let i = 0; i < leftChildren.length; i++) {
             const verticalGap = i == 0 ? 0 : this.verticalGap;
-            let bbox = this.layoutTopic(leftChildren[i], 'left');
+            const bbox = this.layoutTopic(leftChildren[i], 'left');
             LWidth = Math.max(LWidth, bbox[0]);
             LHeight += verticalGap + bbox[1]; // need to add vertical
             LBBoxes.push(bbox);
@@ -1551,14 +1553,23 @@ class Layout {
     }
     centerMap() {
         const port = this.mindmap.board;
-        this.mindmap.root.dom.style.left =
-            port.offsetWidth / 2 -
-                this.bBoxes[this.mindmap.root.id][0] / 2 +
-                'px';
-        this.mindmap.root.dom.style.top =
-            port.offsetHeight / 2 -
+        const portBox = port.getBoundingClientRect();
+        if (parseInt(this.mindmap.root.dom.style.height) < portBox.height) {
+            this.mindmap.root.dom.style.top = port.offsetHeight / 2 -
                 this.bBoxes[this.mindmap.root.id][1] / 2 +
                 'px';
+        }
+        else {
+            this.mindmap.root.dom.style.top = '0px';
+        }
+        if (parseInt(this.mindmap.root.dom.style.width) < portBox.width) {
+            this.mindmap.root.dom.style.left = port.offsetWidth / 2 -
+                this.bBoxes[this.mindmap.root.id][0] / 2 +
+                'px';
+        }
+        else {
+            this.mindmap.root.dom.style.left = '0px';
+        }
     }
     anchorCanvas(topic) {
         let bbox = this.bBoxes[topic.id];
@@ -1654,7 +1665,7 @@ class MindMap {
         this.board.classList.add('mindmap-board');
         this.connections = document.createElement('div');
         this.connections.classList.add('mindmap_connections');
-        for (let e of [this.board, this.connections]) {
+        for (const e of [this.board, this.connections]) {
             this.dom.appendChild(e);
         }
         this.board.appendChild(this.root.initDom());
@@ -1732,14 +1743,14 @@ class Selections {
         });
     }
     clearSelection() {
-        for (let topicId of this.selection) {
+        for (const topicId of this.selection) {
             this.mindmap.eventBus.dispatch({ topicId, type: 'deselect' });
         }
         this.selection = new Set();
     }
     clearSelectionExcept(topicIds) {
         const selection = new Set(this.selection);
-        for (let topicId of selection) {
+        for (const topicId of selection) {
             if (!topicIds.has(topicId)) {
                 this.mindmap.eventBus.dispatch({ topicId, type: 'deselect' });
                 selection.delete(topicId);
@@ -1750,7 +1761,7 @@ class Selections {
     makeSelection(topicIds) {
         this.clearSelectionExcept(new Set(topicIds));
         const selection = new Set(this.selection);
-        for (let topicId of new Set(topicIds)) {
+        for (const topicId of new Set(topicIds)) {
             if (!selection.has(topicId)) {
                 this.mindmap.eventBus.dispatch({ topicId, type: 'select' });
                 selection.add(topicId);
@@ -1866,10 +1877,10 @@ class Topic {
         this.DOMEventHandlers = this.getDOMEventHandlers();
     }
     static fromJSON(topicJSON, context) {
-        let title = topicJSON.title;
+        const title = topicJSON.title;
         let children = [];
         const topic = new Topic({ title, children }, context);
-        let childrenArr = topicJSON.children;
+        const childrenArr = topicJSON.children;
         if (childrenArr && childrenArr.length) {
             children = childrenArr
                 .map((v) => Topic.fromJSON(Object.assign(Object.assign({}, v), { parent: this }), { mindmap: context.mindmap, parent: topic }))
@@ -1914,14 +1925,14 @@ class Topic {
         this.dom.appendChild(this.childrenContainer);
         this.topicEl.appendChild(this.text);
         this.dom.appendChild(this.editingWrapper);
-        for (let child of this.children) {
+        for (const child of this.children) {
             this.childrenContainer.appendChild(child.initDom());
         }
         return this.dom;
     }
     destroy(emit = true) {
         if (this.parent) {
-            for (let child of [...this.children]) {
+            for (const child of [...this.children]) {
                 child.destroy(false);
             }
             this.mindmap.eventBus.unregister(this);
@@ -2011,7 +2022,7 @@ class Topic {
     enterFreeFlowMode() {
         this.editingWrapper.style.position = 'absolute';
         this.editingWrapper.style.width = '200px';
-        for (let p of ['top', 'right', 'bottom', 'left']) {
+        for (const p of ['top', 'right', 'bottom', 'left']) {
             if (this.topicEl.style[p]) {
                 this.editingWrapper.style[p] = '0px';
             }
@@ -2022,7 +2033,7 @@ class Topic {
                 : '200px';
     }
     exitFreeFlowMode() {
-        for (let property of [
+        for (const property of [
             'top',
             'right',
             'bottom',
@@ -2045,12 +2056,12 @@ class Topic {
         };
     }
     attachEvents() {
-        for (let eventName in this.DOMEventHandlers) {
+        for (const eventName in this.DOMEventHandlers) {
             this.dom.addEventListener(eventName, this.DOMEventHandlers[eventName]);
         }
     }
     detachEvents() {
-        for (let eventName in this.DOMEventHandlers) {
+        for (const eventName in this.DOMEventHandlers) {
             this.dom.removeEventListener(eventName, this.DOMEventHandlers[eventName]);
         }
     }
