@@ -17,9 +17,8 @@ class DragNDrop {
 				mirror: {
 					constrainDimensions: true,
 				},
+				delay: 200,
 			});
-
-			// this.droppable.removePlugin(Plugins.)
 
 			this.droppable.on('drag:start', this.dragStart.bind(this));
 			this.droppable.on('droppable:dropped', this.dropped.bind(this));
