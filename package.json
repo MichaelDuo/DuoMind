@@ -39,6 +39,7 @@
 		"webpack-dev-server": "^3.11.0"
 	},
 	"dependencies": {
+		"@shopify/draggable": "^1.0.0-beta.11",
 		"lodash": "^4.17.20",
 		"uuid": "^7.0.2"
 	}

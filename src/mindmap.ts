@@ -5,6 +5,7 @@ import Selection from 'selection';
 import EventBus from 'eventbus';
 import CommandService from 'commands/command_service';
 import makeMindmapCommands from 'commands/mindmap_commands';
+import DragNDrop from 'dragndrop';
 
 interface Config {
 	data: any;
@@ -14,6 +15,7 @@ class MindMap {
 	root: Topic;
 	eventBus: EventBus;
 	selection: Selection;
+	dragNDrop: DragNDrop;
 
 	dom!: HTMLElement;
 	board!: HTMLElement;
@@ -29,6 +31,7 @@ class MindMap {
 		this.root = Topic.fromJSON(data, {mindmap: this, parent: null});
 		this.initDom();
 		this.selection = new Selection(this);
+		this.dragNDrop = new DragNDrop(this);
 
 		this.commandService = new CommandService();
 		this.mindmapCommands = makeMindmapCommands(this);

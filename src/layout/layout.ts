@@ -34,8 +34,10 @@ class Layout {
 		/* Topic's width and height with all it's children included */
 		this.bBoxes = {}; // {id: [width, height]}
 		this.mindmap = mindmap;
+		// debounce()
 		mindmap.eventBus.on('update', () => {
 			this.update(mindmap.root);
+			mindmap.eventBus.emit('layoutUpdated');
 		});
 	}
 
@@ -60,9 +62,9 @@ class Layout {
 			topic.childrenContainer.style.removeProperty(property);
 		}
 
-		let topicBox = topic.getBox();
+		const topicBox = topic.getBox();
 
-		let dirToCssKey: {[key: string]: 'left' | 'right'} = {
+		const dirToCssKey: {[key: string]: 'left' | 'right'} = {
 			right: 'left',
 			left: 'right',
 		};
@@ -70,7 +72,7 @@ class Layout {
 		// layout children and get children dimension context
 		let childrenMaxWidth = 0;
 		let childrenTotalHeight = 0;
-		let bBoxes = [];
+		const bBoxes = [];
 		for (let i = 0; i < topic.children.length; i++) {
 			const child = topic.children[i];
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
@@ -94,10 +96,10 @@ class Layout {
 		}
 
 		// calculate bbox
-		let bboxWidth =
+		const bboxWidth =
 			topicBox[0] +
 			(childrenMaxWidth ? childrenMaxWidth + this.horizontalGap : 0);
-		let bboxHeight = Math.max(topicBox[1], childrenTotalHeight);
+		const bboxHeight = Math.max(topicBox[1], childrenTotalHeight);
 
 		// update bbox cache
 		this.bBoxes[topic.id] = [bboxWidth, bboxHeight];
@@ -122,17 +124,19 @@ class Layout {
 
 	centerMap() {
 		const port = this.mindmap.board;
-		const portBox = port.getBoundingClientRect()
-		if(parseInt(this.mindmap.root.dom.style.height)<portBox.height){
-			this.mindmap.root.dom.style.top = port.offsetHeight / 2 -
+		const portBox = port.getBoundingClientRect();
+		if (parseInt(this.mindmap.root.dom.style.height) < portBox.height) {
+			this.mindmap.root.dom.style.top =
+				port.offsetHeight / 2 -
 				this.bBoxes[this.mindmap.root.id][1] / 2 +
 				'px';
 		} else {
 			this.mindmap.root.dom.style.top = '0px';
 		}
 
-		if(parseInt(this.mindmap.root.dom.style.width)<portBox.width){
-			this.mindmap.root.dom.style.left = port.offsetWidth / 2 -
+		if (parseInt(this.mindmap.root.dom.style.width) < portBox.width) {
+			this.mindmap.root.dom.style.left =
+				port.offsetWidth / 2 -
 				this.bBoxes[this.mindmap.root.id][0] / 2 +
 				'px';
 		} else {
@@ -141,7 +145,7 @@ class Layout {
 	}
 
 	anchorCanvas(topic: Topic) {
-		let bbox = this.bBoxes[topic.id];
+		const bbox = this.bBoxes[topic.id];
 		topic.canvas.width = bbox[0];
 		topic.canvas.height = bbox[1];
 		topic.canvas.style.left = '0px';
@@ -166,7 +170,7 @@ class Layout {
 			topicRect.top - canvasRect.top + topic.topicEl.offsetHeight / 2,
 		];
 
-		for (let child of topic.children) {
+		for (const child of topic.children) {
 			this.drawConnections(child);
 			const childRect = getOffset(child.topicEl, this.mindmap.dom);
 
