@@ -18,6 +18,7 @@ class DragNDrop {
 					constrainDimensions: true,
 				},
 				delay: 200,
+				classes: {mirror: ['topic-mirror']} as any,
 			});
 
 			this.droppable.on('drag:start', this.dragStart.bind(this));
