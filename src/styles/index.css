@@ -18,3 +18,7 @@
 	height: 100%;
 	overflow: auto;
 }
+
+:focus {
+	outline: none;
+}
