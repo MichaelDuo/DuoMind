@@ -74,12 +74,13 @@ class Topic {
 		return [rect.width, rect.height];
 	}
 
-	// Only remove from memory, to fully remove, call destroy method
+	// Only remove from memory, and DOM, to fully remove, call destroy method
 	public removeChild(child: Topic) {
 		const idx = this.children.indexOf(child);
 		if (idx >= 0) {
 			this.children.splice(idx, 1);
 		}
+		child.dom.remove();
 	}
 
 	public initDom() {
@@ -157,18 +158,20 @@ class Topic {
 		}
 	}
 
-	public addChild() {
-		const newChild = new Topic(
-			{
-				title: 'New Topic',
-				children: [],
-			},
-			{mindmap: this.mindmap, parent: this}
-		);
-		this.children.push(newChild);
-		this.childrenContainer.appendChild(newChild.initDom());
+	public addChild(child?: Topic, index = -1) {
+		if (!child) {
+			child = new Topic(
+				{
+					title: 'New Topic',
+					children: [],
+				},
+				{mindmap: this.mindmap, parent: this}
+			);
+		}
+		this.children.push(child);
+		this.childrenContainer.appendChild(child.initDom());
 		this.mindmap.eventBus.emit('update');
-		this.mindmap.eventBus.emit('new:topic', newChild);
+		this.mindmap.eventBus.emit('new:topic', child);
 	}
 
 	public addSibling() {

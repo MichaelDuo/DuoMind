@@ -112,6 +112,10 @@ class MindMap {
 	restoreCommandDelegate() {
 		this.commandService.setDelegate(this.mindmapCommands);
 	}
+
+	getTopicById(id: string) {
+		return this.eventBus.topics[id];
+	}
 }
 
 export default MindMap;
