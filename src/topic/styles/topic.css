@@ -48,7 +48,7 @@
 	z-index: 999;
 }
 
-.topic-drop-area {
+/* .topic-drop-area {
 	position: absolute;
 	left: 0px;
 	top: 0px;
@@ -56,7 +56,7 @@
 	width: calc(100% + 30px);
 	height: 100%;
 	pointer-events: none;
-}
+} */
 
 /* .topic-drop-area {
 
