@@ -1,6 +1,5 @@
-import Topic from 'topic';
-import MindMap from 'mindmap';
 import {getOffset} from 'utils';
+import {LayoutAble} from './types';
 
 /**
       Topic Container, canvas
@@ -13,35 +12,22 @@ import {getOffset} from 'utils';
 +-----------+---------------------+
  */
 
-export interface LayoutAble {
-	getContainer(): HTMLElement;
-	getTopic(): HTMLElement;
-	getChildrenContainer(): HTMLElement;
-	getCanvas(): HTMLElement;
-	getViewPort(): HTMLElement;
-}
-
-class Layout {
+abstract class Layout {
 	protected bBoxes: {
 		[key: string]: number[];
 	};
 
 	horizontalGap = 25; // Topic Horizontal Gap
 	verticalGap = 15; // Topic Vertical Gap
-	mindmap: MindMap;
+	viewPort: HTMLElement;
 
-	constructor(mindmap: MindMap) {
+	constructor(viewPort: HTMLElement) {
 		/* Topic's width and height with all it's children included */
 		this.bBoxes = {}; // {id: [width, height]}
-		this.mindmap = mindmap;
-		// debounce()
-		mindmap.eventBus.on('update', () => {
-			this.update(mindmap.root);
-			mindmap.eventBus.emit('layoutUpdated');
-		});
+		this.viewPort = viewPort;
 	}
 
-	update(topic: Topic) {
+	update(topic: LayoutAble) {
 		// this.updateBBoxes(topic);
 		// let mapCenter = [600, 300];
 		// // this.layout(topic, mapCenter, 'right');
@@ -49,20 +35,26 @@ class Layout {
 		// this.drawConnections(topic);
 	}
 
-	layoutRoot(topic: Topic, pos: number[]) {
+	layoutRoot(topic: LayoutAble, pos: number[]) {
 		throw new Error('"layoutRoot" method should implement in subclass');
 	}
 
 	// @return: bounding box of layouted topic
-	layoutTopic(topic: Topic, direction: 'left' | 'right') {
+	layoutTopic(topic: LayoutAble, direction: 'left' | 'right') {
+		const container = topic.getContainer();
+		const topicEl = topic.getNode();
+		const childrenContainer = topic.getChildrenContainer();
+		const children = topic.getChildren();
+		const topicId = topic.getId();
+
 		// Reset styles
 		for (const property of ['left', 'right']) {
-			topic.dom.style.removeProperty(property);
-			topic.topicEl.style.removeProperty(property);
-			topic.childrenContainer.style.removeProperty(property);
+			container.style.removeProperty(property);
+			topicEl.style.removeProperty(property);
+			childrenContainer.style.removeProperty(property);
 		}
 
-		const topicBox = topic.getBox();
+		const topicBox = this.getBox(topic);
 
 		const dirToCssKey: {[key: string]: 'left' | 'right'} = {
 			right: 'left',
@@ -73,8 +65,8 @@ class Layout {
 		let childrenMaxWidth = 0;
 		let childrenTotalHeight = 0;
 		const bBoxes = [];
-		for (let i = 0; i < topic.children.length; i++) {
-			const child = topic.children[i];
+		for (let i = 0; i < children.length; i++) {
+			const child = children[i];
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
 			const bbox = this.layoutTopic(child, direction);
 			childrenTotalHeight += bbox[1] + verticalGap;
@@ -84,13 +76,14 @@ class Layout {
 
 		// position children
 		let offsetTop = 0;
-		for (let i = 0; i < topic.children.length; i++) {
-			const child = topic.children[i];
+		for (let i = 0; i < children.length; i++) {
+			const child = children[i];
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
 
+			const childContainer = child.getContainer();
 			// set container position
-			child.dom.style[dirToCssKey[direction]] = 0 + 'px';
-			child.dom.style.top = verticalGap + offsetTop + 'px';
+			childContainer.style[dirToCssKey[direction]] = 0 + 'px';
+			childContainer.style.top = verticalGap + offsetTop + 'px';
 
 			offsetTop += bBoxes[i][1] + verticalGap;
 		}
@@ -102,59 +95,42 @@ class Layout {
 		const bboxHeight = Math.max(topicBox[1], childrenTotalHeight);
 
 		// update bbox cache
-		this.bBoxes[topic.id] = [bboxWidth, bboxHeight];
+		this.bBoxes[topicId] = [bboxWidth, bboxHeight];
 
 		// position topicEl
-		topic.topicEl.style.top = bboxHeight / 2 - topicBox[1] / 2 + 'px';
-		topic.topicEl.style[dirToCssKey[direction]] = 0 + 'px';
+		topicEl.style.top = bboxHeight / 2 - topicBox[1] / 2 + 'px';
+		topicEl.style[dirToCssKey[direction]] = 0 + 'px';
 
 		// set container dimension
-		topic.dom.style.width = bboxWidth + 'px';
-		topic.dom.style.height = bboxHeight + 'px';
+		container.style.width = bboxWidth + 'px';
+		container.style.height = bboxHeight + 'px';
 
-		topic.childrenContainer.style.top =
+		childrenContainer.style.top =
 			(bboxHeight - childrenTotalHeight) / 2 + 'px';
-		topic.childrenContainer.style[dirToCssKey[direction]] =
+		childrenContainer.style[dirToCssKey[direction]] =
 			topicBox[0] + this.horizontalGap + 'px';
-		topic.childrenContainer.style.width = childrenMaxWidth + 'px';
-		topic.childrenContainer.style.height = childrenTotalHeight + 'px';
+		childrenContainer.style.width = childrenMaxWidth + 'px';
+		childrenContainer.style.height = childrenTotalHeight + 'px';
 
 		return [bboxWidth, bboxHeight]; // width and height
 	}
 
-	centerMap() {
-		const port = this.mindmap.board;
-		const portBox = port.getBoundingClientRect();
-		if (parseInt(this.mindmap.root.dom.style.height) < portBox.height) {
-			this.mindmap.root.dom.style.top =
-				port.offsetHeight / 2 -
-				this.bBoxes[this.mindmap.root.id][1] / 2 +
-				'px';
-		} else {
-			this.mindmap.root.dom.style.top = '0px';
-		}
-
-		if (parseInt(this.mindmap.root.dom.style.width) < portBox.width) {
-			this.mindmap.root.dom.style.left =
-				port.offsetWidth / 2 -
-				this.bBoxes[this.mindmap.root.id][0] / 2 +
-				'px';
-		} else {
-			this.mindmap.root.dom.style.left = '0px';
-		}
+	anchorCanvas(node: LayoutAble) {
+		const bbox = this.bBoxes[node.getId()];
+		const canvas = node.getCanvas();
+		canvas.width = bbox[0];
+		canvas.height = bbox[1];
+		canvas.style.left = '0px';
+		canvas.style.top = '0px';
 	}
 
-	anchorCanvas(topic: Topic) {
-		const bbox = this.bBoxes[topic.id];
-		topic.canvas.width = bbox[0];
-		topic.canvas.height = bbox[1];
-		topic.canvas.style.left = '0px';
-		topic.canvas.style.top = '0px';
-	}
-
-	drawConnections(topic: Topic) {
-		this.anchorCanvas(topic);
-		const ctx = topic.canvas.getContext('2d');
+	drawConnections(component: LayoutAble) {
+		this.anchorCanvas(component);
+		const viewPort = this.viewPort;
+		const canvas = component.getCanvas();
+		const node = component.getNode();
+		const ctx = canvas.getContext('2d');
+		const children = component.getChildren();
 
 		if (!ctx) {
 			console.error('Can not get context');
@@ -162,21 +138,23 @@ class Layout {
 		}
 		ctx.strokeStyle = 'rgba(143, 141, 125, 1)';
 
-		const canvasRect = getOffset(topic.canvas, this.mindmap.dom);
-		const topicRect = getOffset(topic.topicEl, this.mindmap.dom);
+		const canvasRect = getOffset(canvas, viewPort);
+		const topicRect = getOffset(node, viewPort);
 
 		const topicPos = [
-			topicRect.left - canvasRect.left + topic.topicEl.offsetWidth / 2,
-			topicRect.top - canvasRect.top + topic.topicEl.offsetHeight / 2,
+			topicRect.left - canvasRect.left + node.offsetWidth / 2,
+			topicRect.top - canvasRect.top + node.offsetHeight / 2,
 		];
 
-		for (const child of topic.children) {
+		for (const child of children) {
 			this.drawConnections(child);
-			const childRect = getOffset(child.topicEl, this.mindmap.dom);
+			const childRect = getOffset(child.getNode(), viewPort);
 
 			const childPos = [
 				childRect.left - canvasRect.left,
-				childRect.top - canvasRect.top + child.topicEl.offsetHeight / 2,
+				childRect.top -
+					canvasRect.top +
+					child.getNode().offsetHeight / 2,
 			];
 
 			ctx.beginPath();
@@ -189,12 +167,17 @@ class Layout {
 				// left
 				ctx.moveTo(topicPos[0], topicPos[1]); // topic center
 				ctx.lineTo(
-					childPos[0] + child.topicEl.offsetWidth,
+					childPos[0] + child.getNode().offsetWidth,
 					childPos[1]
 				); // child center
 			}
 			ctx.stroke();
 		}
+	}
+
+	protected getBox(component: LayoutAble) {
+		const rect = component.getNode().getBoundingClientRect();
+		return [rect.width, rect.height];
 	}
 }
 

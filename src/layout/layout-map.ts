@@ -1,21 +1,24 @@
-import Topic from 'topic';
 import Layout from './layout';
+import {LayoutAble} from './types';
 
 class MapLayout extends Layout {
-	update(root: Topic) {
+	update(root: LayoutAble) {
 		console.log('update');
 		this.layoutRoot(root);
 		this.drawConnections(root);
-		this.centerMap();
+		// this.centerMap();
 	}
 
-	layoutRoot(root: Topic) {
-		const LRSplitIndex = Math.floor(root.children.length / 2);
-		const rightChildren = root.children.slice(0, LRSplitIndex);
-		const leftChildren = root.children.slice(
-			LRSplitIndex,
-			root.children.length
-		);
+	layoutRoot(root: LayoutAble) {
+		const container = root.getContainer();
+		const topicEl = root.getNode();
+		const childrenContainer = root.getChildrenContainer();
+		const children = root.getChildren();
+		const topicId = root.getId();
+
+		const LRSplitIndex = Math.floor(children.length / 2);
+		const rightChildren = children.slice(0, LRSplitIndex);
+		const leftChildren = children.slice(LRSplitIndex, children.length);
 
 		let RWidth = 0,
 			RHeight = 0;
@@ -41,7 +44,7 @@ class MapLayout extends Layout {
 			LBBoxes.push(bbox);
 		}
 
-		const topicBox = root.getBox();
+		const topicBox = this.getBox(root);
 
 		const RhorizontalGap = RWidth ? this.horizontalGap : 0;
 		const LhorizontalGap = LWidth ? this.horizontalGap : 0;
@@ -51,21 +54,20 @@ class MapLayout extends Layout {
 		const bboxHeight = Math.max(topicBox[1], RHeight, LHeight);
 
 		// update bbox cache
-		this.bBoxes[root.id] = [bboxWidth, bboxHeight];
+		this.bBoxes[topicId] = [bboxWidth, bboxHeight];
 
 		// position topicEl
-		root.topicEl.style.left =
-			LWidth + (LWidth ? this.horizontalGap : 0) + 'px';
-		root.topicEl.style.top = bboxHeight / 2 - topicBox[1] / 2 + 'px';
+		topicEl.style.left = LWidth + (LWidth ? this.horizontalGap : 0) + 'px';
+		topicEl.style.top = bboxHeight / 2 - topicBox[1] / 2 + 'px';
 
 		// position right children
 		let offsetTop = (bboxHeight - RHeight) / 2;
 		for (let i = 0; i < rightChildren.length; i++) {
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
 			const child = rightChildren[i];
-			child.dom.style.left =
+			child.getContainer().style.left =
 				LWidth + RhorizontalGap + LhorizontalGap + topicBox[0] + 'px';
-			child.dom.style.top = verticalGap + offsetTop + 'px';
+			child.getContainer().style.top = verticalGap + offsetTop + 'px';
 			offsetTop += verticalGap + RBBoxes[i][1];
 		}
 
@@ -74,18 +76,18 @@ class MapLayout extends Layout {
 		for (let i = 0; i < leftChildren.length; i++) {
 			const verticalGap = i == 0 ? 0 : this.verticalGap;
 			const child = leftChildren[i];
-			child.dom.style.right =
+			child.getContainer().style.right =
 				RWidth + RhorizontalGap + LhorizontalGap + topicBox[0] + 'px';
 			+'px';
-			child.dom.style.top = verticalGap + offsetTop + 'px';
+			child.getContainer().style.top = verticalGap + offsetTop + 'px';
 			offsetTop += verticalGap + LBBoxes[i][1];
 		}
 
 		// set dimensions
-		root.dom.style.width = bboxWidth + 'px';
-		root.dom.style.height = bboxHeight + 'px';
-		root.childrenContainer.style.width = bboxWidth + 'px';
-		root.childrenContainer.style.height = bboxHeight + 'px';
+		container.style.width = bboxWidth + 'px';
+		container.style.height = bboxHeight + 'px';
+		childrenContainer.style.width = bboxWidth + 'px';
+		childrenContainer.style.height = bboxHeight + 'px';
 		return [bboxWidth, bboxHeight];
 	}
 }

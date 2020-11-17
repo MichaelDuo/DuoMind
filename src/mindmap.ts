@@ -27,7 +27,7 @@ class MindMap {
 	constructor(config: Config) {
 		const {data} = config;
 		this.eventBus = new EventBus(this);
-		this.layout = new MapLayout(this);
+		this.layout = new MapLayout(this.dom);
 		this.root = Topic.fromJSON(data, {mindmap: this, parent: null});
 		this.initDom();
 		this.selection = new Selection(this);
@@ -73,7 +73,7 @@ class MindMap {
 		this.layout.update(this.root);
 
 		// position map
-		this.layout.centerMap();
+		this.centerMap();
 	}
 
 	initEvents() {
@@ -103,6 +103,31 @@ class MindMap {
 				this.commandService.exec('editTopic', {topicId: topicId});
 			}
 		);
+
+		this.eventBus.on('update', () => {
+			this.layout.update(this.root);
+			this.centerMap();
+		});
+	}
+
+	centerMap() {
+		const port = this.board;
+		const portBox = port.getBoundingClientRect();
+		const mapBox = this.root.dom.getBoundingClientRect();
+
+		if (parseInt(this.root.dom.style.height) < portBox.height) {
+			this.root.dom.style.top =
+				port.offsetHeight / 2 - mapBox.height / 2 + 'px';
+		} else {
+			this.root.dom.style.top = '0px';
+		}
+
+		if (parseInt(this.root.dom.style.width) < portBox.width) {
+			this.root.dom.style.left =
+				port.offsetWidth / 2 - mapBox.width / 2 + 'px';
+		} else {
+			this.root.dom.style.left = '0px';
+		}
 	}
 
 	setCommandDelegate(delegate: CommandService | null) {

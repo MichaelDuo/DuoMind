@@ -38,14 +38,11 @@ class DragNDrop {
 	}
 
 	private dragStart(e: any) {
-		console.log('drag start');
 		this.mindmap.dom.classList.add('dragging');
 	}
 
 	private dragStop(e: any) {
 		this.mindmap.dom.classList.remove('dragging');
-		console.log('Drag Source: ', this.dragSource);
-		console.log('Drop Target: ', this.dropTarget);
 
 		if (this.dragSource && this.dropTarget) {
 			this.dragSource.parent?.removeChild(this.dragSource);
@@ -62,6 +59,8 @@ class DragNDrop {
 		}
 		e.cancel();
 	}
+
+	// private searchClosest() {}
 }
 
 export default DragNDrop;

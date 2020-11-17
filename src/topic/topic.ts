@@ -1,5 +1,17 @@
 import {v4 as uuidv4} from 'uuid';
 import MindMap from 'mindmap';
+import {LayoutAble} from 'layout/types';
+
+/**
+      Topic Container, canvas
++-----------+---------------------+
+|           |                     |
++--------+  |                     |
+|  Topic |  | Children Container  |
++--------+  |                     |
+|           |                     |
++-----------+---------------------+
+ */
 
 interface TopicData {
 	id?: string;
@@ -7,7 +19,7 @@ interface TopicData {
 	children: Array<Topic>;
 }
 
-class Topic {
+class Topic implements LayoutAble {
 	id: string;
 	title: string;
 	children: Array<Topic>;
@@ -17,6 +29,7 @@ class Topic {
 	dom!: HTMLElement;
 	topicEl!: HTMLElement;
 	text!: HTMLElement;
+	dropArea!: HTMLElement;
 	canvas!: HTMLCanvasElement;
 	childrenContainer!: HTMLElement;
 	editingWrapper!: HTMLElement;
@@ -87,6 +100,7 @@ class Topic {
 		this.dom = document.createElement('div');
 		this.topicEl = document.createElement('div');
 		this.text = document.createElement('div');
+		this.dropArea = document.createElement('div');
 		this.canvas = document.createElement('canvas');
 		this.childrenContainer = document.createElement('div');
 		this.editingWrapper = document.createElement('div');
@@ -94,6 +108,7 @@ class Topic {
 		this.dom.classList.add('topic-container');
 		this.topicEl.classList.add('topic');
 		this.topicEl.id = this.id;
+		this.dropArea.classList.add('topic-drop-area');
 		this.canvas.classList.add('branch-connections');
 		this.childrenContainer.classList.add('topic-children-container');
 		this.text.classList.add('topic-text');
@@ -108,6 +123,7 @@ class Topic {
 		this.dom.appendChild(this.childrenContainer);
 		this.topicEl.appendChild(this.text);
 		this.dom.appendChild(this.editingWrapper);
+		this.dom.appendChild(this.dropArea);
 
 		for (const child of this.children) {
 			this.childrenContainer.appendChild(child.initDom());
@@ -280,6 +296,31 @@ class Topic {
 			);
 		}
 	}
+
+	// getters
+	public getId() {
+		return this.id;
+	}
+	public getContainer() {
+		return this.dom;
+	}
+	public getNode() {
+		return this.topicEl;
+	}
+	public getChildrenContainer() {
+		return this.childrenContainer;
+	}
+	public getCanvas() {
+		return this.canvas;
+	}
+	public getChildren() {
+		return this.children;
+	}
+	// public setDirection(direction: string) {
+	// 	console.log(direction);
+	// }
+
+	// setters
 }
 
 export default Topic;
