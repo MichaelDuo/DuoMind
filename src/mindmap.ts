@@ -6,6 +6,7 @@ import EventBus from 'eventbus';
 import CommandService from 'commands/command_service';
 import makeMindmapCommands from 'commands/mindmap_commands';
 import DragNDrop from 'dragndrop';
+import {findTopicId} from 'utils';
 
 interface Config {
 	data: any;
@@ -140,6 +141,11 @@ class MindMap {
 
 	getTopicById(id: string) {
 		return this.eventBus.topics[id];
+	}
+
+	getTopicFor(el: HTMLElement): Topic | null {
+		const topicId = findTopicId(el);
+		return topicId ? this.getTopicById(topicId) : null;
 	}
 }
 
