@@ -190,17 +190,20 @@ class Topic implements LayoutAble {
 		this.mindmap.eventBus.emit('new:topic', child);
 	}
 
-	public addSibling() {
-		const newSibling = new Topic(
-			{
-				title: 'New Topic',
-				children: [],
-			},
-			{mindmap: this.mindmap, parent: this.parent}
-		);
+	public addSibling(topic: Topic | null = null, after = true) {
+		let newSibling = topic;
+		if (!newSibling) {
+			newSibling = new Topic(
+				{
+					title: 'New Topic',
+					children: [],
+				},
+				{mindmap: this.mindmap, parent: this.parent}
+			);
+		}
 		if (this.parent) {
 			this.parent.children.splice(
-				this.parent.children.indexOf(this) + 1,
+				this.parent.children.indexOf(this) + (after ? 1 : 0),
 				0,
 				newSibling
 			);
@@ -315,6 +318,9 @@ class Topic implements LayoutAble {
 	}
 	public getChildren() {
 		return this.children;
+	}
+	public isRoot() {
+		return this.parent == null;
 	}
 	// public setDirection(direction: string) {
 	// 	console.log(direction);

@@ -3,3 +3,19 @@
 	opacity: 0.5;
 	z-index: 999;
 }
+
+.topic.append {
+	color: orange;
+	border-color: orange;
+}
+
+.topic.addSiblingBefore {
+	color: orange;
+	border-top-color: orange;
+}
+
+.topic.addSiblingAfter {
+	/* color: orange; */
+	/* border-color: orange; */
+	border-bottom-color: orange;
+}

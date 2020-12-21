@@ -1,4 +1,3 @@
-import {Droppable, Plugins, Draggable} from '@shopify/draggable';
 import MindMap from 'mindmap';
 import Topic from 'topic';
 import {getOffset} from 'utils';
@@ -7,7 +6,6 @@ import {throttle} from 'lodash';
 
 class DragNDrop {
 	mindmap: MindMap;
-	droppable: Droppable | undefined;
 
 	dragSource: Topic | null = null;
 	dropTarget: Topic | null = null;
@@ -17,6 +15,8 @@ class DragNDrop {
 	ghost: HTMLElement | null = null;
 	cursorPos: [number, number] = [0, 0];
 	ghostPos: [number, number] = [0, 0];
+	closest: Topic | null = null;
+	dragState: {topic: Topic | null; op: string} = {topic: null, op: ''};
 
 	eventHandlers: {[key: string]: (e: MouseEvent) => any} = {
 		mousedown: this.mousedown.bind(this),
@@ -31,55 +31,9 @@ class DragNDrop {
 
 	private initEvents() {
 		this.mindmap.eventBus.on('mounted', () => {
-			// this.droppable = new Droppable(this.mindmap.dom, {
-			// 	draggable: '.topic',
-			// 	dropzone: '.topic-children-container, .topic',
-			// 	mirror: {
-			// 		constrainDimensions: true,
-			// 	},
-			// 	delay: 200,
-			// 	classes: {mirror: ['topic-mirror']} as any,
-			// });
-
-			// this.droppable.on('drag:start', this.dragStart.bind(this));
-			// this.droppable.on('drag:stop', this.dragStop.bind(this));
-			// this.droppable.on('droppable:dropped', this.dropped.bind(this));
-
-			// this.mindmap.dom.addEventListener(
-			// 	'mousedown',
-			// 	this.mouseDown.bind(this)
-			// );
-
 			this.mindmap.dom.addEventListener('mousedown', this);
 		});
-
-		// this.mindmap.eventBus.on('new:topic', (topic: any) => {
-		// 	console.log('should add topic to container');
-		// });
 	}
-
-	// private dragStart(e: any) {
-	// 	this.mindmap.dom.classList.add('dragging');
-	// }
-
-	// private dragStop(e: any) {
-	// 	this.mindmap.dom.classList.remove('dragging');
-
-	// 	if (this.dragSource && this.dropTarget) {
-	// 		this.dragSource.parent?.removeChild(this.dragSource);
-	// 		this.dropTarget.addChild(this.dragSource);
-	// 	}
-	// }
-
-	// private dropped(e: any) {
-	// 	if (e.dropzone.classList.contains('topic')) {
-	// 		this.dragSource = this.mindmap.getTopicById(e.dragEvent.source.id);
-	// 		this.dropTarget = this.mindmap.getTopicById(e.dropzone.id);
-	// 	} else if (e.dropzone.classList.contains('topic-children-container')) {
-	// 		console.log('Drop on children');
-	// 	}
-	// 	e.cancel();
-	// }
 
 	public handleEvent(e: MouseEvent) {
 		if (this.eventHandlers[e.type]) {
@@ -115,7 +69,6 @@ class DragNDrop {
 
 	private updateDrag(e: MouseEvent) {
 		if (!this.dragSource) return;
-		// console.log(this.)
 		if (!this.ghost) {
 			this.createGhost();
 		}
@@ -126,11 +79,31 @@ class DragNDrop {
 		this.cursorPos[1] = e.clientY;
 
 		this.moveGhost(dx, dy);
+		const dragState = this.getDragState();
+		this.visualizeDragState(dragState);
 	}
 
 	private endDrag() {
-		this.destroyGhost();
+		if (this.dragState.topic && this.dragSource) {
+			switch (this.dragState.op) {
+				case 'append':
+					this.dragState.topic.parent?.removeChild(this.dragSource);
+					this.dragState.topic.addChild(this.dragSource);
+				case 'addSiblingBefore':
+					this.dragState.topic.parent?.removeChild(this.dragSource);
+					this.dragState.topic.addSibling(this.dragSource, false);
+					break;
+				case 'addSiblingAfter':
+					this.dragState.topic.parent?.removeChild(this.dragSource);
+					this.dragState.topic.addSibling(this.dragSource, true);
+					break;
+			}
+		}
+		if (this.dragState.topic) {
+			this.dragState.topic.topicEl.classList.remove(this.dragState.op);
+		}
 		this.dragSource = null;
+		this.destroyGhost();
 	}
 
 	private createGhost() {
@@ -154,6 +127,50 @@ class DragNDrop {
 		this.ghost.style.left = this.ghostPos[0] + 'px';
 		this.ghost.style.top = this.ghostPos[1] + 'px';
 		return;
+	}
+
+	private getDragState(): any {
+		if (!this.ghost || !this.dragSource) return;
+		const closest = this.mindmap.getClosestTopic(
+			this.cursorPos[0],
+			this.cursorPos[1]
+		);
+		const target = closest.topic;
+
+		const state: any = {
+			topic: target,
+			op: null,
+		};
+
+		let tmp: Topic | null = target;
+		while (tmp && !tmp.isRoot()) {
+			if (tmp == this.dragSource) return state;
+			tmp = tmp.parent;
+		}
+		const targetRect = target.topicEl.getBoundingClientRect();
+
+		if (
+			this.cursorPos[0] >= targetRect.x &&
+			this.cursorPos[0] <= targetRect.x + targetRect.width &&
+			this.cursorPos[1] >= targetRect.y &&
+			this.cursorPos[1] <= targetRect.y + targetRect.height
+		) {
+			state.op = 'append';
+		} else if (this.cursorPos[1] < targetRect.y) {
+			state.op = 'addSiblingBefore';
+		} else if (this.cursorPos[1] > targetRect.y + targetRect.height) {
+			state.op = 'addSiblingAfter';
+		}
+
+		return state;
+	}
+
+	private visualizeDragState(dragState: any) {
+		if (this.dragState.topic) {
+			this.dragState.topic.topicEl.classList.remove(this.dragState.op);
+		}
+		this.dragState = dragState;
+		this.dragState.topic?.topicEl.classList.add(this.dragState.op);
 	}
 
 	private destroyGhost() {

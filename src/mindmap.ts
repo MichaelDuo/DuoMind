@@ -147,6 +147,36 @@ class MindMap {
 		const topicId = findTopicId(el);
 		return topicId ? this.getTopicById(topicId) : null;
 	}
+
+	// relative to view port
+	getClosestTopic(
+		x: number,
+		y: number
+	): {topic: Topic; dy: number; dx: number} {
+		const all: {topic: Topic; dx: number; dy: number}[] = [];
+
+		function preorder(topic: Topic) {
+			const rect = topic.topicEl.getBoundingClientRect();
+			const dx = rect.left + rect.width / 2 - x;
+			const dy = rect.top + rect.height / 2 - y;
+			all.push({
+				topic,
+				dx,
+				dy,
+			});
+			topic.children.forEach(preorder);
+		}
+
+		preorder(this.root);
+
+		all.sort((a, b) => {
+			const da = a.dx * a.dx + a.dy * a.dy;
+			const db = b.dx * b.dx + b.dy * b.dy;
+			return da - db;
+		});
+
+		return all[0];
+	}
 }
 
 export default MindMap;
