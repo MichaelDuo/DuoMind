@@ -87,14 +87,15 @@ class DragNDrop {
 		if (this.dragState.topic && this.dragSource) {
 			switch (this.dragState.op) {
 				case 'append':
-					this.dragState.topic.parent?.removeChild(this.dragSource);
+					this.dragSource.parent?.removeChild(this.dragSource);
 					this.dragState.topic.addChild(this.dragSource);
+					break;
 				case 'addSiblingBefore':
-					this.dragState.topic.parent?.removeChild(this.dragSource);
+					this.dragSource.parent?.removeChild(this.dragSource);
 					this.dragState.topic.addSibling(this.dragSource, false);
 					break;
 				case 'addSiblingAfter':
-					this.dragState.topic.parent?.removeChild(this.dragSource);
+					this.dragSource.parent?.removeChild(this.dragSource);
 					this.dragState.topic.addSibling(this.dragSource, true);
 					break;
 			}

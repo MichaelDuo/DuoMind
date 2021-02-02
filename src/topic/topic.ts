@@ -77,6 +77,13 @@ class Topic implements LayoutAble {
 		return topic;
 	}
 
+	public json(): any {
+		return {
+			title: this.title,
+			children: this.children.map((child) => child.json()),
+		};
+	}
+
 	public printTitle(): void {
 		console.log(this.title);
 	}
@@ -184,6 +191,7 @@ class Topic implements LayoutAble {
 				{mindmap: this.mindmap, parent: this}
 			);
 		}
+		child.parent = this;
 		this.children.push(child);
 		this.childrenContainer.appendChild(child.initDom());
 		this.mindmap.eventBus.emit('update');
@@ -202,6 +210,7 @@ class Topic implements LayoutAble {
 			);
 		}
 		if (this.parent) {
+			newSibling.parent = this.parent;
 			this.parent.children.splice(
 				this.parent.children.indexOf(this) + (after ? 1 : 0),
 				0,

@@ -177,6 +177,10 @@ class MindMap {
 
 		return all[0];
 	}
+
+	json(): any {
+		return this.root.json();
+	}
 }
 
 export default MindMap;
