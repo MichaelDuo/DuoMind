@@ -59,6 +59,7 @@ class DragNDrop {
 
 	public mouseup(e: MouseEvent) {
 		this.mindmap.dom.removeEventListener('mousemove', this);
+		this.mindmap.dom.removeEventListener('mouseup', this);
 		this.endDrag();
 	}
 
@@ -100,11 +101,8 @@ class DragNDrop {
 					break;
 			}
 		}
-		if (this.dragState.topic) {
-			this.dragState.topic.topicEl.classList.remove(this.dragState.op);
-		}
-		this.dragSource = null;
-		this.destroyGhost();
+
+		this.reset();
 	}
 
 	private createGhost() {
@@ -178,6 +176,15 @@ class DragNDrop {
 		this.ghost?.parentNode?.removeChild(this.ghost);
 		this.ghost = null;
 		return;
+	}
+
+	private reset() {
+		if (this.dragState.topic) {
+			this.dragState.topic.topicEl.classList.remove(this.dragState.op);
+		}
+		this.dragState = {topic: null, op: ''};
+		this.dragSource = null;
+		this.destroyGhost();
 	}
 }
 

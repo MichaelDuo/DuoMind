@@ -104,6 +104,7 @@ class Topic implements LayoutAble {
 	}
 
 	public initDom() {
+		// console.log(this.title);
 		this.dom = document.createElement('div');
 		this.topicEl = document.createElement('div');
 		this.text = document.createElement('div');
