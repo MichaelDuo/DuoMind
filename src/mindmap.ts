@@ -7,6 +7,7 @@ import CommandService from 'commands/command_service';
 import makeMindmapCommands from 'commands/mindmap_commands';
 import DragNDrop from 'dragndrop';
 import {findTopicId} from 'utils';
+import {throttle} from 'lodash';
 
 interface Config {
 	data: any;
@@ -105,10 +106,17 @@ class MindMap {
 			}
 		);
 
-		this.eventBus.on('update', () => {
-			this.layout.update(this.root);
-			this.centerMap();
-		});
+		this.eventBus.on(
+			'update',
+			throttle(
+				() => {
+					this.layout.update(this.root);
+					this.centerMap();
+				},
+				10,
+				{leading: true}
+			)
+		);
 	}
 
 	centerMap() {

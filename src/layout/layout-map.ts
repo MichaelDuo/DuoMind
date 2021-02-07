@@ -1,5 +1,6 @@
 import Layout from './layout';
 import {LayoutAble} from './types';
+// import {throttle} from 'lodash';
 
 class MapLayout extends Layout {
 	update(root: LayoutAble) {
@@ -10,6 +11,7 @@ class MapLayout extends Layout {
 	}
 
 	layoutRoot(root: LayoutAble) {
+		console.log('layout');
 		const container = root.getContainer();
 		const topicEl = root.getNode();
 		const childrenContainer = root.getChildrenContainer();

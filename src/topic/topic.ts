@@ -51,6 +51,67 @@ class Topic implements LayoutAble {
 		this.DOMEventHandlers = this.getDOMEventHandlers();
 	}
 
+	// getters
+	public getId() {
+		return this.id;
+	}
+	public getContainer() {
+		return this.dom;
+	}
+	public getNode() {
+		return this.topicEl;
+	}
+	public getChildrenContainer() {
+		return this.childrenContainer;
+	}
+	public getCanvas() {
+		return this.canvas;
+	}
+	public getChildren() {
+		return this.children;
+	}
+	public isRoot() {
+		return this.parent == null;
+	}
+
+	public initDom() {
+		// console.log(this.title);
+		this.dom = document.createElement('div');
+		this.topicEl = document.createElement('div');
+		this.text = document.createElement('div');
+		this.dropArea = document.createElement('div');
+		this.canvas = document.createElement('canvas');
+		this.childrenContainer = document.createElement('div');
+		this.editingWrapper = document.createElement('div');
+
+		this.dom.classList.add('topic-container');
+		this.topicEl.classList.add('topic');
+		this.topicEl.id = this.id;
+		this.dropArea.classList.add('topic-drop-area');
+		this.canvas.classList.add('branch-connections');
+		this.childrenContainer.classList.add('topic-children-container');
+		this.text.classList.add('topic-text');
+		this.editingWrapper.classList.add('editing-wrapper');
+
+		this.text.innerText = this.title;
+
+		// make sure child have enough space to grow, the max-width is 200px
+		this.dom.style.width = '200px';
+
+		this.editingWrapper.appendChild(this.topicEl);
+		this.dom.appendChild(this.canvas);
+		this.dom.appendChild(this.childrenContainer);
+		this.topicEl.appendChild(this.text);
+		this.dom.appendChild(this.editingWrapper);
+		this.dom.appendChild(this.dropArea);
+
+		for (const child of this.children) {
+			this.childrenContainer.appendChild(child.initDom());
+		}
+
+		return this.dom;
+	}
+
 	static fromJSON(
 		topicJSON: any,
 		context: {mindmap: MindMap; parent: Topic | null}
@@ -77,21 +138,47 @@ class Topic implements LayoutAble {
 		return topic;
 	}
 
-	public json(): any {
-		return {
-			title: this.title,
-			children: this.children.map((child) => child.json()),
-		};
+	/* model operations */
+	public insertChild(index: number, child?: Topic) {
+		if (!child) {
+			child = new Topic(
+				{
+					title: 'New Topic',
+					children: [],
+				},
+				{mindmap: this.mindmap, parent: this}
+			);
+		}
+		child.parent = this;
+		this.children.splice(index, 0, child);
+		this.childrenContainer.appendChild(child.initDom());
+		this.mindmap.eventBus.emit('update');
+		this.mindmap.eventBus.emit('new:topic', child);
 	}
 
-	public printTitle(): void {
-		console.log(this.title);
+	public updateTitle(title: string) {
+		this.title = title;
+		this.enterFreeFlowMode();
+		this.text.innerText = title;
+		this.exitFreeFlowMode();
+		this.mindmap.eventBus.emit('update');
+
+		this.mindmap.eventBus.emit('MODEL_UPDATE', {
+			action: 'SET_TITLE',
+			payload: {
+				path: this.getPath(),
+				title: title,
+			},
+		});
 	}
 
-	public getBox() {
-		// TODO: put in layout mode, then exit layout mode
-		const rect = this.topicEl.getBoundingClientRect();
-		return [rect.width, rect.height];
+	public getPath(topic: Topic | null = this): number[] {
+		const path: number[] = [];
+		while (topic?.parent) {
+			path.unshift(topic.parent.children.indexOf(topic));
+			topic = topic.parent;
+		}
+		return path;
 	}
 
 	// Only remove from memory, and DOM, to fully remove, call destroy method
@@ -103,58 +190,18 @@ class Topic implements LayoutAble {
 		child.dom.remove();
 	}
 
-	public initDom() {
-		// console.log(this.title);
-		this.dom = document.createElement('div');
-		this.topicEl = document.createElement('div');
-		this.text = document.createElement('div');
-		this.dropArea = document.createElement('div');
-		this.canvas = document.createElement('canvas');
-		this.childrenContainer = document.createElement('div');
-		this.editingWrapper = document.createElement('div');
-
-		this.dom.classList.add('topic-container');
-		this.topicEl.classList.add('topic');
-		this.topicEl.id = this.id;
-		this.dropArea.classList.add('topic-drop-area');
-		this.canvas.classList.add('branch-connections');
-		this.childrenContainer.classList.add('topic-children-container');
-		this.text.classList.add('topic-text');
-
-		this.text.innerText = this.title;
-
-		// make sure child have enough space to grow, the max-width is 200px
-		this.dom.style.width = '200px';
-
-		this.editingWrapper.appendChild(this.topicEl);
-		this.dom.appendChild(this.canvas);
-		this.dom.appendChild(this.childrenContainer);
-		this.topicEl.appendChild(this.text);
-		this.dom.appendChild(this.editingWrapper);
-		this.dom.appendChild(this.dropArea);
-
-		for (const child of this.children) {
-			this.childrenContainer.appendChild(child.initDom());
-		}
-
-		return this.dom;
+	public addChild(child?: Topic, index = -1) {
+		this.insertChild(this.children.length, child);
 	}
 
-	public destroy(emit = true) {
-		if (this.parent) {
-			for (const child of [...this.children]) {
-				child.destroy(false);
-			}
-			this.mindmap.eventBus.unregister(this);
-			this.parent.removeChild(this);
-			this.dom.remove();
-			if (emit) {
-				this.mindmap.eventBus.emit('update');
-				this.mindmap.eventBus.emit('destroyed:topic', this);
-			}
-		}
+	public addSibling(topic?: Topic, after = true) {
+		this.parent?.insertChild(
+			this.parent?.children.indexOf(this) + (after ? 1 : 0),
+			topic
+		);
 	}
 
+	// UI operations
 	public onAction(action: {type: string; payload?: any}): void {
 		switch (action.type) {
 			case 'select':
@@ -162,6 +209,7 @@ class Topic implements LayoutAble {
 				break;
 			case 'deselect':
 				this.topicEl.classList.remove('selected');
+				this.updateTitle(this.text.textContent || '');
 				this.exitEditMode();
 				break;
 			case 'addChild':
@@ -179,47 +227,6 @@ class Topic implements LayoutAble {
 			default:
 				console.log('Unhandled action: ', action);
 				break;
-		}
-	}
-
-	public addChild(child?: Topic, index = -1) {
-		if (!child) {
-			child = new Topic(
-				{
-					title: 'New Topic',
-					children: [],
-				},
-				{mindmap: this.mindmap, parent: this}
-			);
-		}
-		child.parent = this;
-		this.children.push(child);
-		this.childrenContainer.appendChild(child.initDom());
-		this.mindmap.eventBus.emit('update');
-		this.mindmap.eventBus.emit('new:topic', child);
-	}
-
-	public addSibling(topic: Topic | null = null, after = true) {
-		let newSibling = topic;
-		if (!newSibling) {
-			newSibling = new Topic(
-				{
-					title: 'New Topic',
-					children: [],
-				},
-				{mindmap: this.mindmap, parent: this.parent}
-			);
-		}
-		if (this.parent) {
-			newSibling.parent = this.parent;
-			this.parent.children.splice(
-				this.parent.children.indexOf(this) + (after ? 1 : 0),
-				0,
-				newSibling
-			);
-			this.parent.childrenContainer.appendChild(newSibling.initDom());
-			this.mindmap.eventBus.emit('update');
-			this.mindmap.eventBus.emit('new:topic', newSibling);
 		}
 	}
 
@@ -242,18 +249,19 @@ class Topic implements LayoutAble {
 	public exitEditMode() {
 		if (!this.editing) return;
 		this.editing = false;
-		this.title = this.text.textContent || '';
 		this.text.removeAttribute('contenteditable');
 		this.topicEl.style.removeProperty('z-index');
 		this.topicEl.classList.remove('editing');
-
-		this.mindmap.eventBus.emit('update');
-
 		this.exitFreeFlowMode();
 		this.detachEvents();
 	}
 
 	private enterFreeFlowMode() {
+		// remove constrains
+		this.topicEl.style.removeProperty('width');
+		this.topicEl.style.removeProperty('height');
+
+		// set wrapper
 		this.editingWrapper.style.position = 'absolute';
 		this.editingWrapper.style.width = '200px';
 		for (const p of ['top', 'right', 'bottom', 'left']) {
@@ -268,6 +276,12 @@ class Topic implements LayoutAble {
 	}
 
 	private exitFreeFlowMode() {
+		// set constrains
+		const rect = this.topicEl.getBoundingClientRect();
+		this.topicEl.style.width = rect.width + 'px';
+		this.topicEl.style.height = rect.height + 'px';
+
+		// remove wrapper
 		for (const property of [
 			'top',
 			'right',
@@ -286,6 +300,7 @@ class Topic implements LayoutAble {
 				e.stopPropagation();
 				if ((e as KeyboardEvent).key === 'Enter') {
 					e.preventDefault();
+					this.updateTitle(this.text.textContent || '');
 					this.exitEditMode();
 				}
 			},
@@ -310,33 +325,43 @@ class Topic implements LayoutAble {
 		}
 	}
 
-	// getters
-	public getId() {
-		return this.id;
+	/* Util Methods */
+	public printTitle(): void {
+		console.log(this.title);
 	}
-	public getContainer() {
-		return this.dom;
-	}
-	public getNode() {
-		return this.topicEl;
-	}
-	public getChildrenContainer() {
-		return this.childrenContainer;
-	}
-	public getCanvas() {
-		return this.canvas;
-	}
-	public getChildren() {
-		return this.children;
-	}
-	public isRoot() {
-		return this.parent == null;
-	}
-	// public setDirection(direction: string) {
-	// 	console.log(direction);
+
+	// public getBox() {
+	// 	console.log('yo');
+	// 	if (!this.topicEl.style.width || !this.topicEl.style.height) {
+	// 		console.log('not hit');
+	// 		const rect = this.topicEl.getBoundingClientRect();
+	// 		this.topicEl.style.width = rect.width + 'px';
+	// 		this.topicEl.style.height = rect.height + 'px';
+	// 	}
+	// 	return [
+	// 		parseInt(this.topicEl.style.width),
+	// 		parseInt(this.topicEl.style.height),
+	// 	];
 	// }
 
-	// setters
+	public json(): any {
+		return {
+			title: this.title,
+			children: this.children.map((child) => child.json()),
+		};
+	}
+
+	public destroy() {
+		if (this.parent) {
+			for (const child of [...this.children]) {
+				child.destroy();
+			}
+			this.mindmap.eventBus.unregister(this);
+			this.parent.removeChild(this);
+			this.dom.remove();
+			this.mindmap.eventBus.emit('update');
+		}
+	}
 }
 
 export default Topic;

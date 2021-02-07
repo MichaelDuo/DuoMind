@@ -54,7 +54,7 @@ abstract class Layout {
 			childrenContainer.style.removeProperty(property);
 		}
 
-		const topicBox = this.getBox(topic);
+		// const topicBox = this.getBox(topic);
 
 		const dirToCssKey: {[key: string]: 'left' | 'right'} = {
 			right: 'left',
@@ -87,6 +87,8 @@ abstract class Layout {
 
 			offsetTop += bBoxes[i][1] + verticalGap;
 		}
+
+		const topicBox = this.getBox(topic);
 
 		// calculate bbox
 		const bboxWidth =
