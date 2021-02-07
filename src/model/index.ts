@@ -1,33 +1,63 @@
 import * as Y from 'yjs';
 import {WebsocketProvider} from 'y-websocket';
 import MindMap from 'mindmap';
+import Topic from 'topic';
+import {v4 as uuid} from 'uuid';
 
 class MindmapModel {
 	public doc: Y.Doc = new Y.Doc();
 	public root: Y.Map<any>;
 	public mindmap?: MindMap;
+	private syncing = false;
 
 	constructor(id: string) {
 		this.root = this.doc.getMap('mindmap');
-		const children = new Y.Array();
 
+		const children = new Y.Array();
 		this.root.set('title', 'Root Topic');
+		this.root.set('id', 'root');
 		this.root.set('children', children);
 
-		this.doc.on('update', () => {
-			console.log('Model Update');
+		this.sync();
+		this.root.observeDeep((events) => {
+			// model update map and prevent map update model
+			if (!this.syncing) {
+				this.syncing = true;
+				for (const e of events) {
+					if (e instanceof Y.YMapEvent) {
+						this.handleMapEvent(e);
+					} else if (e instanceof Y.YArrayEvent) {
+						this.handleArrayEvent(e);
+					}
+				}
+				this.syncing = false;
+			}
 		});
+	}
 
-		this.root.observeDeep(() => {
-			console.log('data updated');
-		});
+	public async sync() {
+		const wsProvider = new WebsocketProvider(
+			'ws://localhost:1234',
+			'2',
+			this.doc
+		);
+
+		// wsProvider.on('sync', (isSynced: any) => {
+		// 	this.syncing = !isSynced;
+		// 	console.log('======= REMOTE UPDATE ======', isSynced);
+		// });
 	}
 
 	public setMindmap(mindmap: MindMap) {
 		this.mindmap = mindmap;
-		this.mindmap.eventBus.on('MODEL_UPDATE', (e) =>
-			this.handleMindmapUpdate(e)
-		);
+		this.mindmap.eventBus.on('MODEL_UPDATE', (e) => {
+			// map update model and prevent model update map
+			if (!this.syncing) {
+				this.syncing = true;
+				this.handleMindmapUpdate(e);
+				this.syncing = false;
+			}
+		});
 	}
 
 	public getMindmapData() {
@@ -99,8 +129,38 @@ class MindmapModel {
 		for (const idx of path) {
 			topic = topic.get('children').get(idx);
 		}
-		console.log(topic);
 		return topic;
+	}
+
+	private handleMapEvent(e: Y.YMapEvent<any>) {
+		// console.log('Handle Map Event');
+		// console.log(e);
+		// console.log(e);
+	}
+
+	private handleArrayEvent(e: Y.YArrayEvent<any>) {
+		// console.log('Handle Array Event');
+		// console.log(e.changes.delta);
+		const target = this.mindmap?.getTopicById(e.target.parent?.toJSON().id);
+		for (const change of e.changes.delta) {
+			for (const op in change) {
+				switch (op) {
+					case 'retain':
+						break;
+					case 'insert':
+						for (const item of (change as any)[op]) {
+							const topic = new Topic(item.toJSON(), {
+								mindmap: this.mindmap!,
+								parent: null,
+							});
+							target?.insertChild(target.children.length, topic);
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		}
 	}
 }
 

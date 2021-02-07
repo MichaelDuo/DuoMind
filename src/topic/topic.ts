@@ -120,7 +120,7 @@ class Topic implements LayoutAble {
 
 		let children: Array<Topic> = [];
 
-		const topic = new Topic({title, children}, context);
+		const topic = new Topic({title, children, id: topicJSON.id}, context);
 
 		const childrenArr: Array<any> = topicJSON.children;
 		if (childrenArr && childrenArr.length) {
@@ -140,6 +140,7 @@ class Topic implements LayoutAble {
 
 	/* model operations */
 	public insertChild(index: number, child?: Topic) {
+		console.log('insert child');
 		if (!child) {
 			child = new Topic(
 				{
@@ -363,6 +364,7 @@ class Topic implements LayoutAble {
 
 	public json(): any {
 		return {
+			id: this.id,
 			title: this.title,
 			children: this.children.map((child) => child.json()),
 		};
