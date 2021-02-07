@@ -149,6 +149,16 @@ class Topic implements LayoutAble {
 				{mindmap: this.mindmap, parent: this}
 			);
 		}
+
+		this.mindmap.eventBus.emit('MODEL_UPDATE', {
+			type: 'INSERT_CHILD',
+			payload: {
+				path: this.getPath(),
+				index: index,
+				topic: child.json(),
+			},
+		});
+
 		child.parent = this;
 		this.children.splice(index, 0, child);
 		this.childrenContainer.appendChild(child.initDom());
@@ -157,19 +167,35 @@ class Topic implements LayoutAble {
 	}
 
 	public updateTitle(title: string) {
-		this.title = title;
-		this.enterFreeFlowMode();
-		this.text.innerText = title;
-		this.exitFreeFlowMode();
-		this.mindmap.eventBus.emit('update');
-
 		this.mindmap.eventBus.emit('MODEL_UPDATE', {
-			action: 'SET_TITLE',
+			type: 'SET_TITLE',
 			payload: {
 				path: this.getPath(),
 				title: title,
 			},
 		});
+
+		this.title = title;
+		this.enterFreeFlowMode();
+		this.text.innerText = title;
+		this.exitFreeFlowMode();
+		this.mindmap.eventBus.emit('update');
+	}
+
+	// Only remove from memory, and DOM, to fully remove, call destroy method
+	public removeChild(child: Topic) {
+		const idx = this.children.indexOf(child);
+		this.mindmap.eventBus.emit('MODEL_UPDATE', {
+			type: 'REMOVE_CHILD',
+			payload: {
+				index: idx,
+				path: this.getPath(),
+			},
+		});
+		if (idx >= 0) {
+			this.children.splice(idx, 1);
+		}
+		child.dom.remove();
 	}
 
 	public getPath(topic: Topic | null = this): number[] {
@@ -179,15 +205,6 @@ class Topic implements LayoutAble {
 			topic = topic.parent;
 		}
 		return path;
-	}
-
-	// Only remove from memory, and DOM, to fully remove, call destroy method
-	public removeChild(child: Topic) {
-		const idx = this.children.indexOf(child);
-		if (idx >= 0) {
-			this.children.splice(idx, 1);
-		}
-		child.dom.remove();
 	}
 
 	public addChild(child?: Topic, index = -1) {

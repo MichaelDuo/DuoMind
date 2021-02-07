@@ -4,14 +4,13 @@ import {LayoutAble} from './types';
 
 class MapLayout extends Layout {
 	update(root: LayoutAble) {
-		console.log('update');
+		// console.log('update');
 		this.layoutRoot(root);
 		this.drawConnections(root);
 		// this.centerMap();
 	}
 
 	layoutRoot(root: LayoutAble) {
-		console.log('layout');
 		const container = root.getContainer();
 		const topicEl = root.getNode();
 		const childrenContainer = root.getChildrenContainer();
