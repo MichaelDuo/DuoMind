@@ -43,7 +43,7 @@ class DragNDrop {
 
 	public mousedown(e: MouseEvent) {
 		const topic = this.mindmap.getTopicFor(e.target as HTMLElement);
-		if (!topic) return;
+		if (!topic || topic.isRoot()) return;
 		e.preventDefault();
 
 		this.dragSource = topic;

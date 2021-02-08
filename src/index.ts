@@ -5,13 +5,16 @@ import Model from 'model';
 (window as any).MindMap = MindMap;
 
 window.onload = function () {
-	const model = new Model('my-id');
+	const model = new Model('2');
 	const el = document.getElementById('app');
 	if (!el) return;
-	const mindmap = new MindMap({data: model.getMindmapData()});
-	model.setMindmap(mindmap);
-	mindmap.mount(el);
-	(window as any).mindmap = mindmap;
+
+	model.sync(() => {
+		const mindmap = new MindMap({data: model.getMindmapData()});
+		model.setMindmap(mindmap);
+		mindmap.mount(el);
+		(window as any).mindmap = mindmap;
+	});
 };
 
 // const doc = new Y.Doc();
