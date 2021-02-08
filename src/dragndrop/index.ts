@@ -109,8 +109,10 @@ class DragNDrop {
 		if (!this.dragSource) return;
 		this.ghost = this.dragSource.topicEl.cloneNode(true) as HTMLElement;
 		this.ghost.classList.add('ghost');
-		this.mindmap.dom.appendChild(this.ghost);
-		const offsets = getOffset(this.dragSource.topicEl, this.mindmap.dom);
+
+		this.mindmap.board.appendChild(this.ghost);
+		const offsets = getOffset(this.dragSource.topicEl, this.mindmap.board);
+
 		this.ghostPos = [offsets.left, offsets.top];
 		this.ghost.style.removeProperty('right');
 		this.ghost.style.removeProperty('bottom');
