@@ -5,7 +5,7 @@ import Model from 'model';
 (window as any).MindMap = MindMap;
 
 window.onload = function () {
-	const model = new Model('2');
+	const model = new Model('3');
 	const el = document.getElementById('app');
 	if (!el) return;
 

@@ -151,10 +151,11 @@ class DragNDrop {
 		const targetRect = target.topicEl.getBoundingClientRect();
 
 		if (
-			this.cursorPos[0] >= targetRect.x &&
-			this.cursorPos[0] <= targetRect.x + targetRect.width &&
-			this.cursorPos[1] >= targetRect.y &&
-			this.cursorPos[1] <= targetRect.y + targetRect.height
+			target.isRoot() ||
+			(this.cursorPos[0] >= targetRect.x &&
+				this.cursorPos[0] <= targetRect.x + targetRect.width &&
+				this.cursorPos[1] >= targetRect.y &&
+				this.cursorPos[1] <= targetRect.y + targetRect.height)
 		) {
 			state.op = 'append';
 		} else if (this.cursorPos[1] < targetRect.y) {

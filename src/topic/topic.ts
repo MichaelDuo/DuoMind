@@ -140,7 +140,6 @@ class Topic implements LayoutAble {
 
 	/* model operations */
 	public insertChild(index: number, child?: Topic) {
-		console.log('insert child');
 		if (!child) {
 			child = new Topic(
 				{
@@ -213,6 +212,9 @@ class Topic implements LayoutAble {
 	}
 
 	public addSibling(topic?: Topic, after = true) {
+		if (topic?.isRoot()) {
+			throw new Error('Root topic has no sibling');
+		}
 		this.parent?.insertChild(
 			this.parent?.children.indexOf(this) + (after ? 1 : 0),
 			topic
