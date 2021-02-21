@@ -21,7 +21,7 @@ class MindmapModel {
 	public async sync(cb: (err: Error | null, status: string | null) => void) {
 		// 'ws://localhost:1234'
 		this.provider = new WebsocketProvider(
-			'ws://localhost:1234',
+			'ws://35.226.164.124:80',
 			this.id,
 			this.doc
 		);
@@ -55,6 +55,8 @@ class MindmapModel {
 
 			cb(null, 'good');
 		});
+
+		(window as any).provider = this.provider;
 	}
 
 	public setMindmap(mindmap: MindMap) {

@@ -178,12 +178,19 @@
 			};
 
 			var data3 = {
-				title: 'Test',
+				title: 'Main',
+				children: [
+					{title: 'sub_1'},
+					{title: 'sub_2'},
+					{title: 'sub_3', children: [{title: 'test2'}]}
+				]
 			};
-			window.onload = function () {
-				var el = document.getElementById('app');
-				var mindmap = new MindMap({data: data}).mount(el);
-			};
+			// window.onload = function () {
+			// 	var el = document.getElementById('app');
+			// 	var mindmap = new MindMap({data: data});
+			// 	mindmap.mount(el);
+			// 	window.mindmap = mindmap
+			// };
 		</script>
 	<script type="text/javascript" src="mindmap.js"></script></body>
 </html>
