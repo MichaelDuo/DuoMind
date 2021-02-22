@@ -21,7 +21,7 @@ class MindmapModel {
 	public async sync(cb: (err: Error | null, status: string | null) => void) {
 		// 'ws://localhost:1234'
 		this.provider = new WebsocketProvider(
-			'ws://35.226.164.124:80',
+			'ws://duomind.org',
 			this.id,
 			this.doc
 		);
