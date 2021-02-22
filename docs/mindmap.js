@@ -36808,7 +36808,7 @@ class MindmapModel {
     sync(cb) {
         return __awaiter(this, void 0, void 0, function* () {
             // 'ws://localhost:1234'
-            this.provider = new y_websocket_1.WebsocketProvider('ws://duomind.org', this.id, this.doc);
+            this.provider = new y_websocket_1.WebsocketProvider('wss://duomind.org/', this.id, this.doc);
             this.provider.on('synced', (...args) => {
                 this.root = this.doc.getMap('mindmap');
                 if (lodash_1.isEmpty(this.root.toJSON())) {
