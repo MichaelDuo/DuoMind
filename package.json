@@ -44,7 +44,7 @@
 	},
 	"dependencies": {
 		"@shopify/draggable": "^1.0.0-beta.11",
-		"lodash": "^4.17.20",
+		"lodash": "^4.17.21",
 		"normalize.css": "^8.0.1",
 		"uuid": "^7.0.2"
 	}
